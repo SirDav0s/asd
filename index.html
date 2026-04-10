@@ -21,25 +21,83 @@
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        width: 320px;
+        width: 340px;
         height: fit-content;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: sticky;
+        top: 20px;
         display: flex;
         flex-direction: column;
         gap: 12px;
-        position: sticky;
-        top: 20px;
     }
+    /* Para disimular el scrollbar en el panel */
+    .panel-control::-webkit-scrollbar { width: 6px; }
+    .panel-control::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
     .panel-control h3 { margin-top: 0; margin-bottom: 5px; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;}
+    
+    /* BLOQUES DE SKU */
+    .contenedor-formularios {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .bloque-sku {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+    }
+    .bloque-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+    }
+    .bloque-header h4 { margin: 0; font-size: 14px; color: #0056b3; }
+    .btn-eliminar {
+        cursor: pointer;
+        color: #d9534f;
+        font-weight: bold;
+        font-size: 12px;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+    .btn-eliminar:hover { color: #c9302c; }
+
     .input-group { display: flex; flex-direction: column; gap: 4px;}
     input, select {
         padding: 8px;
-        font-size: 14px;
+        font-size: 13px;
         border: 1px solid #ccc;
         border-radius: 4px;
+        width: 100%;
+        box-sizing: border-box;
     }
-    label { font-size: 13px; font-weight: bold; color: #555; }
+    label { font-size: 12px; font-weight: bold; color: #555; }
     .nota { font-size: 11px; color: #666; font-style: italic; margin-top: -2px; }
-    button {
+    
+    .btn-agregar {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s;
+    }
+    .btn-agregar:hover { background-color: #218838; }
+
+    .btn-imprimir {
         padding: 12px;
         background-color: #0056b3;
         color: #fff;
@@ -48,15 +106,15 @@
         cursor: pointer;
         font-weight: bold;
         font-size: 15px;
-        margin-top: 15px;
+        margin-top: 5px;
         transition: background 0.2s;
     }
-    button:hover { background-color: #004494; }
+    .btn-imprimir:hover { background-color: #004494; }
 
     /* ÁREA DE IMPRESIÓN (HOJA) */
     .area-impresion {
         background: white;
-        width: 210mm; /* Ancho aproximado de hoja A4 */
+        width: 210mm;
         min-height: 297mm;
         padding: 40px 20px;
         box-shadow: 0 0 15px rgba(0,0,0,0.15);
@@ -64,11 +122,25 @@
         box-sizing: border-box;
     }
     
-    /* SKU Y LÍNEA VERTICAL */
-    .header-sku {
-        text-align: center;
+    .linea-vertical {
+        position: absolute;
+        top: 40px;
+        bottom: 40px;
+        left: 50%;
+        border-left: 1px solid black;
+        z-index: 1;
+    }
+
+    /* CONTENEDOR DE CADA GRUPO DE SKU EN LA HOJA */
+    .grupo-impresion-sku {
+        margin-bottom: 60px; /* Separación entre diferentes SKUs */
         position: relative;
         z-index: 2;
+    }
+
+    /* SKU HEADER */
+    .header-sku {
+        text-align: center;
         margin-bottom: 40px;
     }
     .caja-sku {
@@ -77,15 +149,7 @@
         padding: 10px 40px;
         font-weight: bold;
         font-size: 14px;
-        background: white;
-    }
-    .linea-vertical {
-        position: absolute;
-        top: 60px;
-        bottom: 40px;
-        left: 50%;
-        border-left: 1px solid black;
-        z-index: 1;
+        background: white; /* Para tapar la línea vertical */
     }
 
     /* GRILLA DE ETIQUETAS */
@@ -95,8 +159,6 @@
         column-gap: 80px;
         row-gap: 40px;
         justify-items: center;
-        position: relative;
-        z-index: 2;
     }
 
     /* ESTILO INDIVIDUAL DE CADA ETIQUETA */
@@ -127,7 +189,7 @@
     }
     .bold { font-weight: bold; }
     .valores { font-weight: normal; }
-    .icono-clase2 {
+    .icono-clase {
         position: absolute;
         top: 12px;
         right: 12px;
@@ -149,153 +211,233 @@
 <body>
 
 <div class="panel-control">
-    <h3>⚙️ Configuración</h3>
+    <h3>⚙️ Configuración Global</h3>
     
-    <div class="input-group">
-        <label>SKU Principal:</label>
-        <input type="text" id="inSKU" value=" ">
-    </div>
-
     <div class="input-group">
         <label>Certificado (Para nombre de PDF):</label>
-        <input type="text" id="inCertificado" value="CERTIFICADO NNN">
+        <input type="text" id="inCertificado" value="NNN">
     </div>
 
-    <hr style="width: 100%; border: 0; border-top: 1px solid #ddd; margin: 10px 0;">
+    <hr style="width: 100%; border: 0; border-top: 1px solid #ddd; margin: 5px 0;">
 
-    <div class="input-group">
-        <label>Producto:</label>
-        <input type="text" id="inProducto" value=" ">
+    <div class="contenedor-formularios" id="contenedor-formularios">
+        <div class="bloque-sku">
+            <div class="bloque-header">
+                <h4>Datos del Lote 1</h4>
+                </div>
+            <div class="input-group">
+                <label>SKU Principal:</label>
+                <input type="text" class="in-sku" value="MANI0031">
+            </div>
+            <div class="input-group">
+                <label>Producto:</label>
+                <input type="text" class="in-producto" value="CABINA SECADORA DE UÑAS">
+            </div>
+            <div class="input-group">
+                <label>Marca:</label>
+                <input type="text" class="in-marca" value="GADNIC">
+            </div>
+            <div class="input-group">
+                <label>Modelo(s) separados por (;):</label>
+                <input type="text" class="in-modelo" value="SUN50; XTK310; OHH924">
+            </div>
+            <div class="input-group">
+                <label>Características:</label>
+                <input type="text" class="in-carac" value="100-240V~; 50-60Hz ; 48W">
+            </div>
+            <div class="input-group">
+                <label>Origen:</label>
+                <input type="text" class="in-origen" value="CHINA">
+            </div>
+            <div class="input-group">
+                <label>Clase de Aislamiento:</label>
+                <select class="in-clase">
+                    <option value="III">Clase III (III)</option>
+                    <option value="II" selected>Clase II (II)</option>
+                    <option value="I">Clase I (I)</option>
+                </select>
+            </div>
+        </div>
     </div>
 
-    <div class="input-group">
-        <label>Marca:</label>
-        <input type="text" id="inMarca" value=" ">
-    </div>
-
-    <div class="input-group">
-        <label>Modelo(s):</label>
-        <input type="text" id="inModelo" value=" ">
-        <span class="nota">Separá los modelos con un punto y coma (;)</span>
-    </div>
-
-    <div class="input-group">
-        <label>Características:</label>
-        <input type="text" id="inCarac" value=" ~ ">
-    </div>
-    
-    <div class="input-group">
-        <label>Origen:</label>
-        <input type="text" id="inOrigen" value="CHINA">
-    </div>
-
-    <div class="input-group">
-        <label>Clase de Aislamiento:</label>
-        <select id="inClase">
-            <option value="II">Clase II (II)</option>
-            <option value="I">Clase I (I)</option>
-        </select>
-    </div>
-
-    <button onclick="imprimirConTitulo()">🖨️ Imprimir Etiquetas</button>
+    <button class="btn-agregar" onclick="agregarBloqueSKU()">➕ Agregar otro SKU</button>
+    <button class="btn-imprimir" onclick="imprimirConTitulo()">🖨️ Imprimir Etiquetas</button>
 </div>
 
 <div class="area-impresion">
     <div class="linea-vertical"></div>
-    
-    <div class="header-sku">
-        <div class="caja-sku" id="outSKU">SKU: MANI0031</div>
-    </div>
-
-    <div class="grilla-etiquetas" id="contenedorEtiquetas">
+    <div id="contenedor-global-impresion">
         </div>
 </div>
 
 <script>
+    // Función para agregar un nuevo bloque de SKU en el panel
+    function agregarBloqueSKU() {
+        const contenedor = document.getElementById('contenedor-formularios');
+        const bloques = contenedor.querySelectorAll('.bloque-sku');
+        const numeroLote = bloques.length + 1;
+        
+        // Creamos el HTML del nuevo bloque
+        const divBloque = document.createElement('div');
+        divBloque.className = 'bloque-sku';
+        divBloque.innerHTML = `
+            <div class="bloque-header">
+                <h4>Datos del Lote ${numeroLote}</h4>
+                <button class="btn-eliminar" onclick="eliminarBloqueSKU(this)">❌ Quitar</button>
+            </div>
+            <div class="input-group">
+                <label>SKU Principal:</label>
+                <input type="text" class="in-sku" value="NUEVO_SKU">
+            </div>
+            <div class="input-group">
+                <label>Producto:</label>
+                <input type="text" class="in-producto" value="CABINA SECADORA DE UÑAS">
+            </div>
+            <div class="input-group">
+                <label>Marca:</label>
+                <input type="text" class="in-marca" value="GADNIC">
+            </div>
+            <div class="input-group">
+                <label>Modelo(s) separados por (;):</label>
+                <input type="text" class="in-modelo" value="MODELO1; MODELO2">
+            </div>
+            <div class="input-group">
+                <label>Características:</label>
+                <input type="text" class="in-carac" value="100-240V~; 50-60Hz ; 48W">
+            </div>
+            <div class="input-group">
+                <label>Origen:</label>
+                <input type="text" class="in-origen" value="CHINA">
+            </div>
+            <div class="input-group">
+                <label>Clase de Aislamiento:</label>
+                <select class="in-clase">
+                    <option value="III">Clase III (III)</option>
+                    <option value="II" selected>Clase II (II)</option>
+                    <option value="I">Clase I (I)</option>
+                </select>
+            </div>
+        `;
+        contenedor.appendChild(divBloque);
+        generarEtiquetas(); // Actualizamos la vista
+    }
+
+    // Función para eliminar un bloque de SKU
+    function eliminarBloqueSKU(boton) {
+        const bloque = boton.closest('.bloque-sku');
+        bloque.remove();
+        generarEtiquetas(); // Actualizamos la vista
+    }
+
+    // Función principal que lee todos los bloques y dibuja las etiquetas
     function generarEtiquetas() {
-        // Obtenemos los valores de los inputs
-        const sku = document.getElementById('inSKU').value.toUpperCase();
-        const producto = document.getElementById('inProducto').value.toUpperCase();
-        const marca = document.getElementById('inMarca').value.toUpperCase();
-        const baseCaracteristicas = document.getElementById('inCarac').value;
-        const origen = document.getElementById('inOrigen').value.toUpperCase();
-        const clase = document.getElementById('inClase').value;
+        const contenedorImpresion = document.getElementById('contenedor-global-impresion');
+        contenedorImpresion.innerHTML = ''; // Limpiamos la hoja
 
-        // Procesamos los modelos separados por punto y coma
-        const inputModelos = document.getElementById('inModelo').value;
-        const listaModelos = inputModelos.split(';')
-                                         .map(modelo => modelo.trim().toUpperCase())
-                                         .filter(modelo => modelo !== '');
+        const bloquesConfig = document.querySelectorAll('.bloque-sku');
 
-        // Actualizamos el título del SKU
-        document.getElementById('outSKU').innerText = 'SKU: ' + sku;
+        bloquesConfig.forEach(bloque => {
+            // Obtenemos los valores de ESTE bloque en particular
+            const sku = bloque.querySelector('.in-sku').value.toUpperCase();
+            const producto = bloque.querySelector('.in-producto').value.toUpperCase();
+            const marca = bloque.querySelector('.in-marca').value.toUpperCase();
+            const baseCaracteristicas = bloque.querySelector('.in-carac').value;
+            const origen = bloque.querySelector('.in-origen').value.toUpperCase();
+            const clase = bloque.querySelector('.in-clase').value;
+            const inputModelos = bloque.querySelector('.in-modelo').value;
 
-        // Lógica de la Clase (Ícono o Texto)
-        let displayIcono = 'none';
-        let textoClase = '';
+            // Procesamos los modelos
+            const listaModelos = inputModelos.split(';')
+                                             .map(modelo => modelo.trim().toUpperCase())
+                                             .filter(modelo => modelo !== '');
 
-        if (clase === 'II') { 
-            displayIcono = 'block';
-            textoClase = " - Clase II"; // Agrega el texto y muestra el ícono
-        } else if (clase === 'I') { 
-            displayIcono = 'none';
-            textoClase = " - Clase I"; // Agrega solo el texto
-        }
+            // Lógica de Clase para este bloque
+            let displayIcono = 'none';
+            let textoClase = '';
+            let svgIcono = '';
 
-        // Limpiamos el contenedor antes de dibujar
-        const contenedor = document.getElementById('contenedorEtiquetas');
-        contenedor.innerHTML = '';
+            if (clase === 'III') {
+                displayIcono = 'block';
+                textoClase = ""; 
+                svgIcono = `
+                    <svg width="60" height="60">
+                        <polygon points="30,4 56,30 30,56 4,30" fill="none" stroke="black" stroke-width="4"/>
+                        <line x1="22" y1="22" x2="22" y2="38" stroke="black" stroke-width="4"/>
+                        <line x1="30" y1="22" x2="30" y2="38" stroke="black" stroke-width="4"/>
+                        <line x1="38" y1="22" x2="38" y2="38" stroke="black" stroke-width="4"/>
+                    </svg>`;
+            } else if (clase === 'II') { 
+                displayIcono = 'block';
+                textoClase = " - Clase II";
+                svgIcono = `
+                    <svg width="60" height="60">
+                        <rect x="2" y="2" width="56" height="56" fill="none" stroke="black" stroke-width="4"/>
+                        <rect x="15" y="15" width="30" height="30" fill="none" stroke="black" stroke-width="4"/>
+                    </svg>`;
+            } else if (clase === 'I') { 
+                displayIcono = 'none';
+                textoClase = " - Clase I"; 
+                svgIcono = '';
+            }
 
-        // Recorremos cada modelo que el usuario ingresó (genera 1 etiqueta por modelo)
-        listaModelos.forEach(modeloActual => {
-            const divEtiqueta = document.createElement('div');
-            divEtiqueta.className = 'etiqueta';
-            divEtiqueta.innerHTML = `
-                <div class="etiqueta-header">${producto}</div>
-                <div class="etiqueta-body">
-                    <div class="icono-clase2" style="display: ${displayIcono};">
-                        <svg width="60" height="60">
-                            <rect x="2" y="2" width="56" height="56" fill="none" stroke="black" stroke-width="4"/>
-                            <rect x="15" y="15" width="30" height="30" fill="none" stroke="black" stroke-width="4"/>
-                        </svg>
+            // Creamos el contenedor del grupo para la hoja (incluye el título del SKU y su grilla)
+            const divGrupo = document.createElement('div');
+            divGrupo.className = 'grupo-impresion-sku';
+            
+            // Si hay modelos, armamos el HTML interno
+            if (listaModelos.length > 0) {
+                let htmlEtiquetas = '';
+                listaModelos.forEach(modeloActual => {
+                    htmlEtiquetas += `
+                        <div class="etiqueta">
+                            <div class="etiqueta-header">${producto}</div>
+                            <div class="etiqueta-body">
+                                <div class="icono-clase" style="display: ${displayIcono};">
+                                    ${svgIcono}
+                                </div>
+                                <div class="fila"><span class="bold">Marca:</span> <span class="valores">${marca}</span></div>
+                                <div class="fila"><span class="bold">Modelo:</span> <span class="valores">${modeloActual}</span></div>
+                                <div class="fila bold" style="margin-top: 8px;">Caracteristicas:</div>
+                                <div class="fila valores">${baseCaracteristicas}${textoClase}</div>
+                                <div class="fila bold" style="margin-top: 15px;">ORIGEN <span>${origen}</span></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                divGrupo.innerHTML = `
+                    <div class="header-sku">
+                        <div class="caja-sku">SKU: ${sku}</div>
                     </div>
-                    <div class="fila"><span class="bold">Marca:</span> <span class="valores">${marca}</span></div>
-                    <div class="fila"><span class="bold">Modelo:</span> <span class="valores">${modeloActual}</span></div>
-                    <div class="fila bold" style="margin-top: 8px;">Caracteristicas:</div>
-                    <div class="fila valores">${baseCaracteristicas}${textoClase}</div>
-                    <div class="fila bold" style="margin-top: 15px;">ORIGEN <span>${origen}</span></div>
-                </div>
-            `;
-            contenedor.appendChild(divEtiqueta);
+                    <div class="grilla-etiquetas">
+                        ${htmlEtiquetas}
+                    </div>
+                `;
+                
+                contenedorImpresion.appendChild(divGrupo);
+            }
         });
     }
 
-    // Nueva función para imprimir con nombre de archivo personalizado
+    // Función de impresión con nombre dinámico
     function imprimirConTitulo() {
         const certificado = document.getElementById('inCertificado').value.trim();
-        const tituloOriginal = document.title; // Guardamos el título original de la página
+        const tituloOriginal = document.title; 
         
-        // Cambiamos el título que lee el navegador para guardar el PDF
         if(certificado !== "") {
             document.title = "Rating Label - " + certificado;
         } else {
             document.title = "Rating Label";
         }
         
-        // Abrimos la ventana de impresión
         window.print();
-        
-        // Volvemos a poner el título original después de imprimir
         document.title = tituloOriginal;
     }
 
-    // Escuchar cambios en todos los inputs relevantes para actualizar en tiempo real
-    const inputs = ['inSKU', 'inProducto', 'inMarca', 'inModelo', 'inCarac', 'inOrigen', 'inClase'];
-    inputs.forEach(id => {
-        document.getElementById(id).addEventListener('input', generarEtiquetas);
-    });
+    // Escuchamos cualquier cambio dentro del panel izquierdo para actualizar en tiempo real
+    document.querySelector('.panel-control').addEventListener('input', generarEtiquetas);
 
-    // Generar la primera vez al cargar la página
+    // Generar la primera vez al cargar
     generarEtiquetas();
 </script>
 
