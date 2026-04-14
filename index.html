@@ -194,6 +194,13 @@
         top: 12px;
         right: 12px;
     }
+    
+    /* LIMITADOR DE CARACTERÍSTICAS PARA DOBLE RENGLÓN */
+    .texto-carac {
+        max-width: 210px; /* Fuerza el salto de línea para no pisar el icono */
+        min-height: 2.6em; /* Asegura que visualmente siempre ocupe 2 renglones */
+        overflow-wrap: break-word; /* Corta palabras muy largas si hiciera falta */
+    }
 
     /* MODO IMPRESIÓN */
     @media print {
@@ -215,7 +222,7 @@
     
     <div class="input-group">
         <label>Certificado (Para nombre de PDF):</label>
-        <input type="text" id="inCertificado" value="CERTIFICADO NNN">
+        <input type="text" id="inCertificado" value="NNN">
     </div>
 
     <hr style="width: 100%; border: 0; border-top: 1px solid #ddd; margin: 5px 0;">
@@ -227,23 +234,23 @@
                 </div>
             <div class="input-group">
                 <label>SKU Principal:</label>
-                <input type="text" class="in-sku" value=" ">
+                <input type="text" class="in-sku" value="MANI0031">
             </div>
             <div class="input-group">
                 <label>Producto:</label>
-                <input type="text" class="in-producto" value=" ">
+                <input type="text" class="in-producto" value="CEPILLO ALISADOR DE CABELLO">
             </div>
             <div class="input-group">
                 <label>Marca:</label>
-                <input type="text" class="in-marca" value=" ">
+                <input type="text" class="in-marca" value="GADNIC">
             </div>
             <div class="input-group">
                 <label>Modelo(s) separados por (;):</label>
-                <input type="text" class="in-modelo" value=" ">
+                <input type="text" class="in-modelo" value="S2200K">
             </div>
             <div class="input-group">
                 <label>Características:</label>
-                <input type="text" class="in-carac" value=" ~ ">
+                <input type="text" class="in-carac" value="220-240V~; 50/60Hz; 1200W">
             </div>
             <div class="input-group">
                 <label>Origen:</label>
@@ -287,23 +294,23 @@
             </div>
             <div class="input-group">
                 <label>SKU Principal:</label>
-                <input type="text" class="in-sku" value=" ">
+                <input type="text" class="in-sku" value="NUEVO_SKU">
             </div>
             <div class="input-group">
                 <label>Producto:</label>
-                <input type="text" class="in-producto" value=" ">
+                <input type="text" class="in-producto" value="CEPILLO ALISADOR DE CABELLO">
             </div>
             <div class="input-group">
                 <label>Marca:</label>
-                <input type="text" class="in-marca" value=" ">
+                <input type="text" class="in-marca" value="GADNIC">
             </div>
             <div class="input-group">
                 <label>Modelo(s) separados por (;):</label>
-                <input type="text" class="in-modelo" value=" ">
+                <input type="text" class="in-modelo" value="MODELO1; MODELO2">
             </div>
             <div class="input-group">
                 <label>Características:</label>
-                <input type="text" class="in-carac" value=" ">
+                <input type="text" class="in-carac" value="220-240V~; 50/60Hz; 1200W">
             </div>
             <div class="input-group">
                 <label>Origen:</label>
@@ -398,7 +405,7 @@
                                 <div class="fila"><span class="bold">Marca:</span> <span class="valores">${marca}</span></div>
                                 <div class="fila"><span class="bold">Modelo:</span> <span class="valores">${modeloActual}</span></div>
                                 <div class="fila bold" style="margin-top: 8px;">Caracteristicas:</div>
-                                <div class="fila valores">${baseCaracteristicas}${textoClase}</div>
+                                <div class="fila valores texto-carac">${baseCaracteristicas}${textoClase}</div>
                                 <div class="fila bold" style="margin-top: 15px;">ORIGEN <span>${origen}</span></div>
                             </div>
                         </div>
