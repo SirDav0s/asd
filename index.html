@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador de Etiquetas Múltiples</title>
+<title>Generador de Etiquetas Pro</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -21,9 +21,9 @@
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        width: 340px;
+        width: 360px;
         height: fit-content;
-        max-height: 90vh;
+        max-height: 95vh;
         overflow-y: auto;
         position: sticky;
         top: 20px;
@@ -31,18 +31,13 @@
         flex-direction: column;
         gap: 12px;
     }
-    /* Para disimular el scrollbar en el panel */
     .panel-control::-webkit-scrollbar { width: 6px; }
     .panel-control::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
-    .panel-control h3 { margin-top: 0; margin-bottom: 5px; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;}
+    .panel-control h3 { margin: 0; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;}
     
-    /* BLOQUES DE SKU */
-    .contenedor-formularios {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
+    .contenedor-formularios { display: flex; flex-direction: column; gap: 20px; }
+    
     .bloque-sku {
         background: #f9f9f9;
         border: 1px solid #ddd;
@@ -51,7 +46,6 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        position: relative;
     }
     .bloque-header {
         display: flex;
@@ -59,59 +53,34 @@
         align-items: center;
         border-bottom: 1px solid #ccc;
         padding-bottom: 5px;
-        margin-bottom: 5px;
     }
     .bloque-header h4 { margin: 0; font-size: 14px; color: #0056b3; }
-    .btn-eliminar {
-        cursor: pointer;
-        color: #d9534f;
-        font-weight: bold;
-        font-size: 12px;
-        background: none;
-        border: none;
-        padding: 0;
-    }
-    .btn-eliminar:hover { color: #c9302c; }
-
-    .input-group { display: flex; flex-direction: column; gap: 4px;}
-    input, select {
-        padding: 8px;
-        font-size: 13px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    label { font-size: 12px; font-weight: bold; color: #555; }
-    .nota { font-size: 11px; color: #666; font-style: italic; margin-top: -2px; }
     
-    .btn-agregar {
-        background-color: #28a745;
-        color: white;
-        border: none;
+    .btn-eliminar { cursor: pointer; color: #d9534f; font-weight: bold; border: none; background: none; font-size: 12px; }
+
+    .input-group { display: flex; flex-direction: column; gap: 4px; }
+    input, select { padding: 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
+    label { font-size: 12px; font-weight: bold; color: #555; }
+
+    /* CHECKBOXES */
+    .grid-iconos {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        background: #fff;
         padding: 10px;
+        border: 1px solid #eee;
         border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: 0.2s;
     }
-    .btn-agregar:hover { background-color: #218838; }
+    .check-item { display: flex; align-items: center; gap: 8px; font-size: 11px; cursor: pointer; }
+    .check-item input { width: auto; cursor: pointer; }
+    .check-item input:disabled { cursor: not-allowed; }
+    .check-item.disabled { color: #aaa; }
 
-    .btn-imprimir {
-        padding: 12px;
-        background-color: #0056b3;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 15px;
-        margin-top: 5px;
-        transition: background 0.2s;
-    }
-    .btn-imprimir:hover { background-color: #004494; }
+    .btn-agregar { background-color: #28a745; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-imprimir { padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 15px; }
 
-    /* ÁREA DE IMPRESIÓN (HOJA) */
+    /* ÁREA DE IMPRESIÓN */
     .area-impresion {
         background: white;
         width: 210mm;
@@ -121,332 +90,280 @@
         position: relative;
         box-sizing: border-box;
     }
+    .linea-vertical { position: absolute; top: 40px; bottom: 40px; left: 50%; border-left: 1px solid black; z-index: 1; }
+    .grupo-impresion-sku { margin-bottom: 60px; position: relative; z-index: 2; }
+    .header-sku { text-align: center; margin-bottom: 30px; }
+    .caja-sku { display: inline-block; border: 1px solid black; padding: 8px 35px; font-weight: bold; font-size: 14px; background: white; }
+
+    .grilla-etiquetas { display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; row-gap: 40px; justify-items: center; }
+
+    .etiqueta { width: 320px; border: 3px solid black; background: white; box-sizing: border-box; color: black; position: relative; page-break-inside: avoid; }
+    .etiqueta-header { border-bottom: 2px solid black; padding: 8px; text-align: center; font-weight: bold; font-size: 13px; }
     
-    .linea-vertical {
-        position: absolute;
-        top: 40px;
-        bottom: 40px;
-        left: 50%;
-        border-left: 1px solid black;
-        z-index: 1;
-    }
-
-    /* CONTENEDOR DE CADA GRUPO DE SKU EN LA HOJA */
-    .grupo-impresion-sku {
-        margin-bottom: 60px; /* Separación entre diferentes SKUs */
-        position: relative;
-        z-index: 2;
-    }
-
-    /* SKU HEADER */
-    .header-sku {
-        text-align: center;
-        margin-bottom: 40px;
-    }
-    .caja-sku {
-        display: inline-block;
-        border: 1px solid black;
-        padding: 10px 40px;
-        font-weight: bold;
-        font-size: 14px;
-        background: white; /* Para tapar la línea vertical */
-    }
-
-    /* GRILLA DE ETIQUETAS */
-    .grilla-etiquetas {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        column-gap: 80px;
-        row-gap: 40px;
-        justify-items: center;
-    }
-
-    /* ESTILO INDIVIDUAL DE CADA ETIQUETA */
-    .etiqueta {
-        width: 320px;
-        border: 3px solid black;
-        background: white;
-        box-sizing: border-box;
-        color: black;
-        page-break-inside: avoid;
-    }
-    .etiqueta-header {
-        border-bottom: 2px solid black;
-        padding: 8px;
-        text-align: center;
-        font-weight: bold;
-        font-size: 13px;
-        letter-spacing: 0.5px;
-    }
-    .etiqueta-body {
-        padding: 12px;
-        position: relative;
-    }
-    .fila {
-        font-size: 15px;
-        margin-bottom: 4px;
-        line-height: 1.3;
-    }
+    .etiqueta-body { padding: 12px; padding-bottom: 16px; min-height: 160px; position: relative; }
+    .fila { font-size: 15px; margin-bottom: 4px; line-height: 1.2; }
     .bold { font-weight: bold; }
-    .valores { font-weight: normal; }
-    .icono-clase {
+    
+    .texto-carac { max-width: 210px; min-height: 2.5em; overflow-wrap: break-word; font-size: 14px; }
+    .texto-origen { max-width: 170px; display: inline-block; }
+
+    /* ICONO CLASE (Arriba a la derecha) */
+    .icono-clase { position: absolute; top: 12px; right: 12px; z-index: 5; }
+    
+    /* CONTENEDOR ICONOS EXTRA (Abajo a la derecha) */
+    .contenedor-iconos-extra {
         position: absolute;
-        top: 12px;
+        bottom: 12px;
         right: 12px;
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+        z-index: 5;
     }
     
-    /* LIMITADOR DE CARACTERÍSTICAS PARA DOBLE RENGLÓN */
-    .texto-carac {
-        max-width: 210px; /* Fuerza el salto de línea para no pisar el icono */
-        min-height: 2.6em; /* Asegura que visualmente siempre ocupe 2 renglones */
-        overflow-wrap: break-word; /* Corta palabras muy largas si hiciera falta */
-    }
+    /* Mismo tamaño que el ícono de clase */
+    .extra-svg { width: 50px; height: 50px; }
 
-    /* MODO IMPRESIÓN */
     @media print {
-        body { background: white; margin: 0; padding: 0; }
+        body { background: white; padding: 0; }
         .panel-control { display: none; }
-        .area-impresion { 
-            box-shadow: none; 
-            width: 100%; 
-            padding: 20px 0;
-            min-height: auto;
-        }
+        .area-impresion { box-shadow: none; width: 100%; padding: 10px 0; }
     }
 </style>
 </head>
 <body>
 
 <div class="panel-control">
-    <h3>⚙️ Configuración Global</h3>
-    
+    <h3>⚙️ Configuración</h3>
     <div class="input-group">
-        <label>Certificado (Para nombre de PDF):</label>
+        <label>Certificado (PDF):</label>
         <input type="text" id="inCertificado" value="NNN">
     </div>
-
-    <hr style="width: 100%; border: 0; border-top: 1px solid #ddd; margin: 5px 0;">
-
     <div class="contenedor-formularios" id="contenedor-formularios">
         <div class="bloque-sku">
-            <div class="bloque-header">
-                <h4>Datos del Lote 1</h4>
-                </div>
+            <div class="bloque-header"><h4>Lote 1</h4></div>
+            <div class="input-group"><label>SKU:</label><input type="text" class="in-sku" value="MANI0031"></div>
+            <div class="input-group"><label>Producto:</label><input type="text" class="in-producto" value="CEPILLO ALISADOR"></div>
+            <div class="input-group"><label>Marca:</label><input type="text" class="in-marca" value="GADNIC"></div>
+            <div class="input-group"><label>Modelos (;):</label><input type="text" class="in-modelo" value="S2200K; S1500"></div>
+            <div class="input-group"><label>Características:</label><input type="text" class="in-carac" value="220-240V~; 50/60Hz; 1200W"></div>
+            <div class="input-group"><label>Origen:</label><input type="text" class="in-origen" value="CHINA"></div>
             <div class="input-group">
-                <label>SKU Principal:</label>
-                <input type="text" class="in-sku" value=" ">
-            </div>
-            <div class="input-group">
-                <label>Producto:</label>
-                <input type="text" class="in-producto" value=" ">
-            </div>
-            <div class="input-group">
-                <label>Marca:</label>
-                <input type="text" class="in-marca" value=" ">
-            </div>
-            <div class="input-group">
-                <label>Modelo(s) separados por (;):</label>
-                <input type="text" class="in-modelo" value=" ">
-            </div>
-            <div class="input-group">
-                <label>Características:</label>
-                <input type="text" class="in-carac" value=" ">
-            </div>
-            <div class="input-group">
-                <label>Origen:</label>
-                <input type="text" class="in-origen" value="CHINA">
-            </div>
-            <div class="input-group">
-                <label>Clase de Aislamiento:</label>
+                <label>Clase:</label>
                 <select class="in-clase">
-                    <option value="III">Clase III (III)</option>
-                    <option value="II" selected>Clase II (II)</option>
-                    <option value="I">Clase I (I)</option>
+                    <option value="III">Clase III</option>
+                    <option value="II" selected>Clase II</option>
+                    <option value="I">Clase I</option>
                 </select>
+            </div>
+            <label>Iconos (Máx. 2):</label>
+            <div class="grid-iconos">
+                <label class="check-item"><input type="checkbox" class="c-raee" checked> RAEE</label>
+                <label class="check-item"><input type="checkbox" class="c-manual"> Manual</label>
+                <label class="check-item"><input type="checkbox" class="c-agua"> No Agua</label>
+                <label class="check-item"><input type="checkbox" class="c-calor"> Calor</label>
+                <label class="check-item"><input type="checkbox" class="c-casa-io"> Casa (In/Out)</label>
+                <label class="check-item"><input type="checkbox" class="c-casa-in"> Casa (In)</label>
+                <label class="check-item"><input type="checkbox" class="c-casa-out"> Casa (Out)</label>
             </div>
         </div>
     </div>
-
     <button class="btn-agregar" onclick="agregarBloqueSKU()">➕ Agregar otro SKU</button>
-    <button class="btn-imprimir" onclick="imprimirConTitulo()">🖨️ Imprimir Etiquetas</button>
+    <button class="btn-imprimir" onclick="imprimirConTitulo()">🖨️ Imprimir</button>
 </div>
 
 <div class="area-impresion">
     <div class="linea-vertical"></div>
-    <div id="contenedor-global-impresion">
-        </div>
+    <div id="contenedor-global-impresion"></div>
 </div>
 
 <script>
-    // Función para agregar un nuevo bloque de SKU en el panel
+    // Dibujos SVG recreados a la perfección basados en tu imagen
+    const SVGS = {
+        raee: `<svg class="extra-svg" viewBox="0 0 100 100">
+                <g fill="none" stroke="black" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+                    <polygon points="30,30 70,30 65,85 35,85" />
+                    <line x1="45" y1="45" x2="55" y2="45" stroke-width="6"/>
+                    <path d="M 25,30 Q 50,25 75,30" />
+                    <path d="M 45,26 V 22 H 55 V 26" />
+                    <circle cx="35" cy="85" r="5" fill="black"/>
+                    <circle cx="65" cy="85" r="5" fill="black"/>
+                </g>
+                <line x1="10" y1="10" x2="90" y2="90" stroke="black" stroke-width="4" />
+                <line x1="90" y1="10" x2="10" y2="90" stroke="black" stroke-width="4" />
+               </svg>`,
+        manual: `<svg class="extra-svg" viewBox="0 0 100 100">
+                  <g fill="none" stroke="black" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+                    <line x1="50" y1="85" x2="50" y2="25" stroke-width="4"/>
+                    <path d="M 50,85 C 35,80 15,80 10,85 V 25 C 15,20 35,20 50,25" />
+                    <path d="M 50,85 C 65,80 85,80 90,85 V 25 C 85,20 65,20 50,25" />
+                    <path d="M 10,85 v 5 c 5,-5 25,-5 40,0 c 15,-5 35,-5 40,0 v -5" stroke-width="4"/>
+                  </g>
+                  <line x1="72" y1="45" x2="72" y2="65" stroke="black" stroke-width="7" stroke-linecap="round"/>
+                  <circle cx="72" cy="32" r="4" fill="black"/>
+                 </svg>`,
+        agua: `<svg class="extra-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="black" stroke-width="4"/>
+                <path d="M 75,65 V 25 H 45" fill="none" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M 35,35 Q 45,25 55,35 Z" fill="none" stroke="black" stroke-width="4" stroke-linejoin="round"/>
+                <line x1="35" y1="45" x2="25" y2="70" stroke="black" stroke-width="3" stroke-dasharray="6,6"/>
+                <line x1="45" y1="45" x2="40" y2="75" stroke="black" stroke-width="3" stroke-dasharray="6,6"/>
+                <line x1="55" y1="45" x2="55" y2="70" stroke="black" stroke-width="3" stroke-dasharray="6,6"/>
+                <line x1="20" y1="80" x2="80" y2="20" stroke="black" stroke-width="4"/>
+               </svg>`,
+        calor: `<svg class="extra-svg" viewBox="0 0 100 100">
+                 <line x1="15" y1="85" x2="85" y2="85" stroke="black" stroke-width="8" stroke-linecap="square"/>
+                 <path d="M 30,65 Q 20,45 30,35 T 30,10" fill="none" stroke="black" stroke-width="6" stroke-linecap="round"/>
+                 <path d="M 50,65 Q 40,45 50,35 T 50,10" fill="none" stroke="black" stroke-width="6" stroke-linecap="round"/>
+                 <path d="M 70,65 Q 60,45 70,35 T 70,10" fill="none" stroke="black" stroke-width="6" stroke-linecap="round"/>
+                </svg>`,
+        casa_io: `<svg class="extra-svg" viewBox="0 0 100 100">
+                   <path d="M 10,45 L 50,10 L 90,45 M 25,32 V 15 H 35 V 23 M 20,45 V 90 H 80 V 85 M 80,55 V 45" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+                   <line x1="55" y1="65" x2="95" y2="65" stroke="black" stroke-width="4" stroke-linecap="round"/>
+                   <polyline points="85,55 95,65 85,75" fill="none" stroke="black" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+                   <line x1="45" y1="80" x2="85" y2="80" stroke="black" stroke-width="4" stroke-linecap="round"/>
+                   <polyline points="55,70 45,80 55,90" fill="none" stroke="black" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+                  </svg>`,
+        casa_in: `<svg class="extra-svg" viewBox="0 0 100 100">
+                   <path d="M 10,45 L 50,10 L 90,45 M 25,32 V 15 H 35 V 23 M 20,45 V 90 H 80 V 80 M 80,60 V 45" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+                   <line x1="50" y1="70" x2="95" y2="70" stroke="black" stroke-width="5" stroke-linecap="round"/>
+                   <polyline points="65,55 50,70 65,85" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+                  </svg>`,
+        casa_out: `<svg class="extra-svg" viewBox="0 0 100 100">
+                    <path d="M 10,45 L 50,10 L 90,45 M 25,32 V 15 H 35 V 23 M 20,45 V 90 H 80 V 80 M 80,60 V 45" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+                    <line x1="50" y1="70" x2="95" y2="70" stroke="black" stroke-width="5" stroke-linecap="round"/>
+                    <polyline points="80,55 95,70 80,85" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+                   </svg>`
+    };
+
     function agregarBloqueSKU() {
         const contenedor = document.getElementById('contenedor-formularios');
-        const bloques = contenedor.querySelectorAll('.bloque-sku');
-        const numeroLote = bloques.length + 1;
-        
-        // Creamos el HTML del nuevo bloque
-        const divBloque = document.createElement('div');
-        divBloque.className = 'bloque-sku';
-        divBloque.innerHTML = `
-            <div class="bloque-header">
-                <h4>Datos del Lote ${numeroLote}</h4>
-                <button class="btn-eliminar" onclick="eliminarBloqueSKU(this)">❌ Quitar</button>
-            </div>
+        const num = contenedor.querySelectorAll('.bloque-sku').length + 1;
+        const div = document.createElement('div');
+        div.className = 'bloque-sku';
+        div.innerHTML = `
+            <div class="bloque-header"><h4>Lote ${num}</h4><button class="btn-eliminar" onclick="this.closest('.bloque-sku').remove(); generarEtiquetas();">❌ Quitar</button></div>
+            <div class="input-group"><label>SKU:</label><input type="text" class="in-sku" value="NUEVO_SKU"></div>
+            <div class="input-group"><label>Producto:</label><input type="text" class="in-producto" value="CEPILLO ALISADOR"></div>
+            <div class="input-group"><label>Marca:</label><input type="text" class="in-marca" value="GADNIC"></div>
+            <div class="input-group"><label>Modelos (;):</label><input type="text" class="in-modelo" value="MOD1"></div>
+            <div class="input-group"><label>Características:</label><input type="text" class="in-carac" value="220-240V~; 50/60Hz; 1200W"></div>
+            <div class="input-group"><label>Origen:</label><input type="text" class="in-origen" value="CHINA"></div>
             <div class="input-group">
-                <label>SKU Principal:</label>
-                <input type="text" class="in-sku" value=" ">
+                <label>Clase:</label>
+                <select class="in-clase"><option value="III">Clase III</option><option value="II" selected>Clase II</option><option value="I">Clase I</option></select>
             </div>
-            <div class="input-group">
-                <label>Producto:</label>
-                <input type="text" class="in-producto" value=" ">
-            </div>
-            <div class="input-group">
-                <label>Marca:</label>
-                <input type="text" class="in-marca" value=" ">
-            </div>
-            <div class="input-group">
-                <label>Modelo(s) separados por (;):</label>
-                <input type="text" class="in-modelo" value=" ">
-            </div>
-            <div class="input-group">
-                <label>Características:</label>
-                <input type="text" class="in-carac" value=" ">
-            </div>
-            <div class="input-group">
-                <label>Origen:</label>
-                <input type="text" class="in-origen" value="CHINA">
-            </div>
-            <div class="input-group">
-                <label>Clase de Aislamiento:</label>
-                <select class="in-clase">
-                    <option value="III">Clase III (III)</option>
-                    <option value="II" selected>Clase II (II)</option>
-                    <option value="I">Clase I (I)</option>
-                </select>
+            <label>Iconos (Máx. 2):</label>
+            <div class="grid-iconos">
+                <label class="check-item"><input type="checkbox" class="c-raee" checked> RAEE</label>
+                <label class="check-item"><input type="checkbox" class="c-manual"> Manual</label>
+                <label class="check-item"><input type="checkbox" class="c-agua"> No Agua</label>
+                <label class="check-item"><input type="checkbox" class="c-calor"> Calor</label>
+                <label class="check-item"><input type="checkbox" class="c-casa-io"> Casa (In/Out)</label>
+                <label class="check-item"><input type="checkbox" class="c-casa-in"> Casa (In)</label>
+                <label class="check-item"><input type="checkbox" class="c-casa-out"> Casa (Out)</label>
             </div>
         `;
-        contenedor.appendChild(divBloque);
-        generarEtiquetas(); // Actualizamos la vista
+        contenedor.appendChild(div);
+        verificarLimitesIconos(div.querySelector('.grid-iconos'));
+        generarEtiquetas();
     }
 
-    // Función para eliminar un bloque de SKU
-    function eliminarBloqueSKU(boton) {
-        const bloque = boton.closest('.bloque-sku');
-        bloque.remove();
-        generarEtiquetas(); // Actualizamos la vista
-    }
-
-    // Función principal que lee todos los bloques y dibuja las etiquetas
-    function generarEtiquetas() {
-        const contenedorImpresion = document.getElementById('contenedor-global-impresion');
-        contenedorImpresion.innerHTML = ''; // Limpiamos la hoja
-
-        const bloquesConfig = document.querySelectorAll('.bloque-sku');
-
-        bloquesConfig.forEach(bloque => {
-            // Obtenemos los valores de ESTE bloque en particular
-            const sku = bloque.querySelector('.in-sku').value.toUpperCase();
-            const producto = bloque.querySelector('.in-producto').value.toUpperCase();
-            const marca = bloque.querySelector('.in-marca').value.toUpperCase();
-            const baseCaracteristicas = bloque.querySelector('.in-carac').value;
-            const origen = bloque.querySelector('.in-origen').value.toUpperCase();
-            const clase = bloque.querySelector('.in-clase').value;
-            const inputModelos = bloque.querySelector('.in-modelo').value;
-
-            // Procesamos los modelos
-            const listaModelos = inputModelos.split(';')
-                                             .map(modelo => modelo.trim().toUpperCase())
-                                             .filter(modelo => modelo !== '');
-
-            // Lógica de Clase para este bloque
-            let displayIcono = 'none';
-            let textoClase = '';
-            let svgIcono = '';
-
-            if (clase === 'III') {
-                displayIcono = 'block';
-                textoClase = ""; 
-                svgIcono = `
-                    <svg width="60" height="60">
-                        <polygon points="30,4 56,30 30,56 4,30" fill="none" stroke="black" stroke-width="4"/>
-                        <line x1="22" y1="22" x2="22" y2="38" stroke="black" stroke-width="4"/>
-                        <line x1="30" y1="22" x2="30" y2="38" stroke="black" stroke-width="4"/>
-                        <line x1="38" y1="22" x2="38" y2="38" stroke="black" stroke-width="4"/>
-                    </svg>`;
-            } else if (clase === 'II') { 
-                displayIcono = 'block';
-                textoClase = " - Clase II";
-                svgIcono = `
-                    <svg width="60" height="60">
-                        <rect x="2" y="2" width="56" height="56" fill="none" stroke="black" stroke-width="4"/>
-                        <rect x="15" y="15" width="30" height="30" fill="none" stroke="black" stroke-width="4"/>
-                    </svg>`;
-            } else if (clase === 'I') { 
-                displayIcono = 'none';
-                textoClase = " - Clase I"; 
-                svgIcono = '';
-            }
-
-            // Creamos el contenedor del grupo para la hoja (incluye el título del SKU y su grilla)
-            const divGrupo = document.createElement('div');
-            divGrupo.className = 'grupo-impresion-sku';
-            
-            // Si hay modelos, armamos el HTML interno
-            if (listaModelos.length > 0) {
-                let htmlEtiquetas = '';
-                listaModelos.forEach(modeloActual => {
-                    htmlEtiquetas += `
-                        <div class="etiqueta">
-                            <div class="etiqueta-header">${producto}</div>
-                            <div class="etiqueta-body">
-                                <div class="icono-clase" style="display: ${displayIcono};">
-                                    ${svgIcono}
-                                </div>
-                                <div class="fila"><span class="bold">Marca:</span> <span class="valores">${marca}</span></div>
-                                <div class="fila"><span class="bold">Modelo:</span> <span class="valores">${modeloActual}</span></div>
-                                <div class="fila bold" style="margin-top: 8px;">Caracteristicas:</div>
-                                <div class="fila valores texto-carac">${baseCaracteristicas}${textoClase}</div>
-                                <div class="fila bold" style="margin-top: 15px;">ORIGEN <span>${origen}</span></div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                divGrupo.innerHTML = `
-                    <div class="header-sku">
-                        <div class="caja-sku">SKU: ${sku}</div>
-                    </div>
-                    <div class="grilla-etiquetas">
-                        ${htmlEtiquetas}
-                    </div>
-                `;
-                
-                contenedorImpresion.appendChild(divGrupo);
+    // Lógica para limitar a 2 iconos como máximo
+    function verificarLimitesIconos(gridElement) {
+        const checkboxes = gridElement.querySelectorAll('input[type="checkbox"]');
+        const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+        
+        checkboxes.forEach(cb => {
+            const label = cb.closest('label');
+            if (!cb.checked) {
+                cb.disabled = checkedCount >= 2;
+                if(cb.disabled) label.classList.add('disabled');
+                else label.classList.remove('disabled');
+            } else {
+                label.classList.remove('disabled');
             }
         });
     }
 
-    // Función de impresión con nombre dinámico
-    function imprimirConTitulo() {
-        const certificado = document.getElementById('inCertificado').value.trim();
-        const tituloOriginal = document.title; 
-        
-        if(certificado !== "") {
-            document.title = "Rating Label - " + certificado;
-        } else {
-            document.title = "Rating Label";
+    // Escuchamos los cambios en los checkboxes de todo el panel
+    document.querySelector('.panel-control').addEventListener('change', function(e) {
+        if (e.target.matches('input[type="checkbox"]')) {
+            verificarLimitesIconos(e.target.closest('.grid-iconos'));
+            generarEtiquetas();
         }
-        
-        window.print();
-        document.title = tituloOriginal;
+    });
+
+    function generarEtiquetas() {
+        const cont = document.getElementById('contenedor-global-impresion');
+        cont.innerHTML = '';
+        document.querySelectorAll('.bloque-sku').forEach(bloque => {
+            const sku = bloque.querySelector('.in-sku').value.toUpperCase();
+            const prod = bloque.querySelector('.in-producto').value.toUpperCase();
+            const marca = bloque.querySelector('.in-marca').value.toUpperCase();
+            const carac = bloque.querySelector('.in-carac').value;
+            const origen = bloque.querySelector('.in-origen').value.toUpperCase();
+            const clase = bloque.querySelector('.in-clase').value;
+            const modelos = bloque.querySelector('.in-modelo').value.split(';').map(m => m.trim().toUpperCase()).filter(m => m !== '');
+
+            // Recopilamos hasta 2 íconos seleccionados
+            let selectedIcons = [];
+            if(bloque.querySelector('.c-raee').checked) selectedIcons.push(SVGS.raee);
+            if(bloque.querySelector('.c-manual').checked) selectedIcons.push(SVGS.manual);
+            if(bloque.querySelector('.c-agua').checked) selectedIcons.push(SVGS.agua);
+            if(bloque.querySelector('.c-calor').checked) selectedIcons.push(SVGS.calor);
+            if(bloque.querySelector('.c-casa-io').checked) selectedIcons.push(SVGS.casa_io);
+            if(bloque.querySelector('.c-casa-in').checked) selectedIcons.push(SVGS.casa_in);
+            if(bloque.querySelector('.c-casa-out').checked) selectedIcons.push(SVGS.casa_out);
+            
+            let iconosHtml = selectedIcons.slice(0, 2).join('');
+
+            let mainIcon = '';
+            let labelClase = (clase !== 'III') ? ` - Clase ${clase}` : "";
+            if(clase === 'II') mainIcon = `<svg width="55" height="55"><rect x="2" y="2" width="51" height="51" fill="none" stroke="black" stroke-width="4"/><rect x="14" y="14" width="27" height="27" fill="none" stroke="black" stroke-width="4"/></svg>`;
+            if(clase === 'III') mainIcon = `<svg width="55" height="55"><polygon points="27,4 51,27 27,51 4,27" fill="none" stroke="black" stroke-width="4"/><line x1="20" y1="20" x2="20" y2="35" stroke="black" stroke-width="3"/><line x1="27" y1="20" x2="27" y2="35" stroke="black" stroke-width="3"/><line x1="34" y1="20" x2="34" y2="35" stroke="black" stroke-width="3"/></svg>`;
+
+            const divGrupo = document.createElement('div');
+            divGrupo.className = 'grupo-impresion-sku';
+            let etiquetasHtml = '';
+            modelos.forEach(mod => {
+                etiquetasHtml += `
+                    <div class="etiqueta">
+                        <div class="etiqueta-header">${prod}</div>
+                        <div class="etiqueta-body">
+                            <div class="icono-clase">${mainIcon}</div>
+                            <div class="fila"><span class="bold">Marca:</span> ${marca}</div>
+                            <div class="fila"><span class="bold">Modelo:</span> ${mod}</div>
+                            <div class="fila bold" style="margin-top:8px">Caracteristicas:</div>
+                            <div class="fila texto-carac">${carac}${labelClase}</div>
+                            <div class="fila bold" style="margin-top:10px">ORIGEN <span class="texto-origen">${origen}</span></div>
+                            <div class="contenedor-iconos-extra">${iconosHtml}</div>
+                        </div>
+                    </div>`;
+            });
+            divGrupo.innerHTML = `<div class="header-sku"><div class="caja-sku">SKU: ${sku}</div></div><div class="grilla-etiquetas">${etiquetasHtml}</div>`;
+            cont.appendChild(divGrupo);
+        });
     }
 
-    // Escuchamos cualquier cambio dentro del panel izquierdo para actualizar en tiempo real
-    document.querySelector('.panel-control').addEventListener('input', generarEtiquetas);
+    function imprimirConTitulo() {
+        const cert = document.getElementById('inCertificado').value.trim();
+        const old = document.title;
+        document.title = "Rating Label - " + (cert || "PRO");
+        window.print();
+        document.title = old;
+    }
 
-    // Generar la primera vez al cargar
+    // Escuchamos el panel para regenerar texto
+    document.querySelector('.panel-control').addEventListener('input', function(e){
+        if (!e.target.matches('input[type="checkbox"]')) {
+            generarEtiquetas();
+        }
+    });
+    
+    // Inicialización del primer bloque
+    verificarLimitesIconos(document.querySelector('.grid-iconos'));
     generarEtiquetas();
 </script>
-
 </body>
 </html>
