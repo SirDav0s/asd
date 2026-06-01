@@ -59,10 +59,24 @@
     .btn-eliminar { cursor: pointer; color: #d9534f; font-weight: bold; border: none; background: none; font-size: 12px; }
 
     .input-group { display: flex; flex-direction: column; gap: 4px; }
-    input[type="text"], select { padding: 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
+    
+    input[type="text"], select, textarea { 
+        padding: 8px; 
+        font-size: 13px; 
+        border: 1px solid #ccc; 
+        border-radius: 4px; 
+        width: 100%; 
+        box-sizing: border-box; 
+        font-family: Arial, sans-serif;
+    }
+    
+    textarea {
+        resize: vertical; 
+        min-height: 40px;
+    }
+
     label { font-size: 12px; font-weight: bold; color: #555; }
 
-    /* Estilo especial para labels con checkbox integrados */
     .label-check { display: flex; align-items: center; gap: 6px; cursor: pointer; }
     .label-check input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; }
 
@@ -104,11 +118,10 @@
     .etiqueta { width: 320px; border: 3px solid black; background: white; box-sizing: border-box; color: black; position: relative; page-break-inside: avoid; }
     .etiqueta-header { border-bottom: 2px solid black; padding: 8px; text-align: center; font-weight: bold; font-size: 13px; }
     
-    /* El cuerpo ahora tiene altura dinámica, pero se protege el fondo con padding */
     .etiqueta-body { 
         padding: 12px; 
-        padding-bottom: 65px; /* Espacio reservado para íconos y ORIGEN */
-        min-height: 70px; /* Altura mínima pequeña que crecerá según contenido */
+        padding-bottom: 65px;
+        min-height: 70px;
         position: relative; 
     }
     
@@ -120,20 +133,9 @@
     .fila-origen { position: absolute; bottom: 16px; left: 12px; font-size: 15px; }
     .texto-origen { max-width: 170px; display: inline-block; }
 
-    /* ICONO CLASE (Arriba a la derecha) */
+    /* ICONOS */
     .icono-clase { position: absolute; top: 12px; right: 12px; z-index: 5; }
-    
-    /* CONTENEDOR ICONOS EXTRA (Abajo a la derecha) */
-    .contenedor-iconos-extra {
-        position: absolute;
-        bottom: 12px;
-        right: 12px;
-        display: flex;
-        gap: 8px;
-        align-items: flex-end;
-        z-index: 5;
-    }
-    
+    .contenedor-iconos-extra { position: absolute; bottom: 12px; right: 12px; display: flex; gap: 8px; align-items: flex-end; z-index: 5; }
     .extra-svg { width: 50px; height: 50px; }
 
     @media print {
@@ -154,8 +156,12 @@
     <div class="contenedor-formularios" id="contenedor-formularios">
         <div class="bloque-sku">
             <div class="bloque-header"><h4>Lote 1</h4></div>
-            <div class="input-group"><label>SKU:</label><input type="text" class="in-sku" value=""></div>
-            <div class="input-group"><label>Producto:</label><input type="text" class="in-producto" value=" "></div>
+            <div class="input-group"><label>SKU:</label><input type="text" class="in-sku" value=" "></div>
+            
+            <div class="input-group">
+                <label class="label-check"><input type="checkbox" class="chk-producto" checked> Producto:</label>
+                <input type="text" class="in-producto" value=" ">
+            </div>
             
             <div class="input-group">
                 <label class="label-check"><input type="checkbox" class="chk-marca" checked> Marca:</label>
@@ -167,7 +173,11 @@
                 <input type="text" class="in-modelo" value=" ">
             </div>
             
-            <div class="input-group"><label>Características:</label><input type="text" class="in-carac" value=" "></div>
+            <div class="input-group">
+                <label>Características:</label>
+                <textarea class="in-carac" rows="2"></textarea>
+            </div>
+            
             <div class="input-group"><label>Origen:</label><input type="text" class="in-origen" value="CHINA"></div>
             
             <div class="input-group">
@@ -180,7 +190,7 @@
                 </select>
             </div>
             
-            <label>Iconos (Máx. 2):</label>
+            <label>Iconos (Máx. 3):</label>
             <div class="grid-iconos">
                 <label class="check-item"><input type="checkbox" class="c-raee" checked> RAEE</label>
                 <label class="check-item"><input type="checkbox" class="c-manual"> Manual</label>
@@ -189,6 +199,8 @@
                 <label class="check-item"><input type="checkbox" class="c-casa-io"> Casa (In/Out)</label>
                 <label class="check-item"><input type="checkbox" class="c-casa-in"> Casa (In)</label>
                 <label class="check-item"><input type="checkbox" class="c-casa-out"> Casa (Out)</label>
+                <label class="check-item"><input type="checkbox" class="c-vapor"> Vapor</label>
+                <label class="check-item"><input type="checkbox" class="c-grifo"> Grifo</label>
             </div>
         </div>
     </div>
@@ -203,60 +215,27 @@
 
 <script>
     const SVGS = {
-        raee: `<svg class="extra-svg" viewBox="0 0 100 100">
-                <g fill="none" stroke="black" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
-                    <polygon points="30,30 70,30 65,85 35,85" />
-                    <line x1="45" y1="45" x2="55" y2="45" stroke-width="6"/>
-                    <path d="M 25,30 Q 50,25 75,30" />
-                    <path d="M 45,26 V 22 H 55 V 26" />
-                    <circle cx="35" cy="85" r="5" fill="black"/>
-                    <circle cx="65" cy="85" r="5" fill="black"/>
-                </g>
-                <line x1="10" y1="10" x2="90" y2="90" stroke="black" stroke-width="4" />
-                <line x1="90" y1="10" x2="10" y2="90" stroke="black" stroke-width="4" />
-               </svg>`,
-        manual: `<svg class="extra-svg" viewBox="0 0 100 100">
-                  <g fill="none" stroke="black" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
-                    <line x1="50" y1="85" x2="50" y2="25" stroke-width="4"/>
-                    <path d="M 50,85 C 35,80 15,80 10,85 V 25 C 15,20 35,20 50,25" />
-                    <path d="M 50,85 C 65,80 85,80 90,85 V 25 C 85,20 65,20 50,25" />
-                    <path d="M 10,85 v 5 c 5,-5 25,-5 40,0 c 15,-5 35,-5 40,0 v -5" stroke-width="4"/>
-                  </g>
-                  <line x1="72" y1="45" x2="72" y2="65" stroke="black" stroke-width="7" stroke-linecap="round"/>
-                  <circle cx="72" cy="32" r="4" fill="black"/>
-                 </svg>`,
-        agua: `<svg class="extra-svg" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="black" stroke-width="4"/>
-                <path d="M 75,65 V 25 H 45" fill="none" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M 35,35 Q 45,25 55,35 Z" fill="none" stroke="black" stroke-width="4" stroke-linejoin="round"/>
-                <line x1="35" y1="45" x2="25" y2="70" stroke="black" stroke-width="3" stroke-dasharray="6,6"/>
-                <line x1="45" y1="45" x2="40" y2="75" stroke="black" stroke-width="3" stroke-dasharray="6,6"/>
-                <line x1="55" y1="45" x2="55" y2="70" stroke="black" stroke-width="3" stroke-dasharray="6,6"/>
-                <line x1="20" y1="80" x2="80" y2="20" stroke="black" stroke-width="4"/>
-               </svg>`,
-        calor: `<svg class="extra-svg" viewBox="0 0 100 100">
-                 <line x1="15" y1="85" x2="85" y2="85" stroke="black" stroke-width="8" stroke-linecap="square"/>
-                 <path d="M 30,65 Q 20,45 30,35 T 30,10" fill="none" stroke="black" stroke-width="6" stroke-linecap="round"/>
-                 <path d="M 50,65 Q 40,45 50,35 T 50,10" fill="none" stroke="black" stroke-width="6" stroke-linecap="round"/>
-                 <path d="M 70,65 Q 60,45 70,35 T 70,10" fill="none" stroke="black" stroke-width="6" stroke-linecap="round"/>
-                </svg>`,
-        casa_io: `<svg class="extra-svg" viewBox="0 0 100 100">
-                   <path d="M 10,45 L 50,10 L 90,45 M 25,32 V 15 H 35 V 23 M 20,45 V 90 H 80 V 85 M 80,55 V 45" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-                   <line x1="55" y1="65" x2="95" y2="65" stroke="black" stroke-width="4" stroke-linecap="round"/>
-                   <polyline points="85,55 95,65 85,75" fill="none" stroke="black" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-                   <line x1="45" y1="80" x2="85" y2="80" stroke="black" stroke-width="4" stroke-linecap="round"/>
-                   <polyline points="55,70 45,80 55,90" fill="none" stroke="black" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-                  </svg>`,
-        casa_in: `<svg class="extra-svg" viewBox="0 0 100 100">
-                   <path d="M 10,45 L 50,10 L 90,45 M 25,32 V 15 H 35 V 23 M 20,45 V 90 H 80 V 80 M 80,60 V 45" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-                   <line x1="50" y1="70" x2="95" y2="70" stroke="black" stroke-width="5" stroke-linecap="round"/>
-                   <polyline points="65,55 50,70 65,85" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-                  </svg>`,
-        casa_out: `<svg class="extra-svg" viewBox="0 0 100 100">
-                    <path d="M 10,45 L 50,10 L 90,45 M 25,32 V 15 H 35 V 23 M 20,45 V 90 H 80 V 80 M 80,60 V 45" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-                    <line x1="50" y1="70" x2="95" y2="70" stroke="black" stroke-width="5" stroke-linecap="round"/>
-                    <polyline points="80,55 95,70 80,85" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
-                   </svg>`
+        raee: `<svg class="extra-svg" viewBox="0 0 100 100"><g fill="none" stroke="black" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><polygon points="30,30 70,30 65,85 35,85" /><line x1="45" y1="45" x2="55" y2="45" stroke-width="6"/><path d="M 25,30 Q 50,25 75,30" /><path d="M 45,26 V 22 H 55 V 26" /><circle cx="35" cy="85" r="5" fill="black"/><circle cx="65" cy="85" r="5" fill="black"/></g><line x1="10" y1="10" x2="90" y2="90" stroke="black" stroke-width="4" /><line x1="90" y1="10" x2="10" y2="90" stroke="black" stroke-width="4" /></svg>`,
+        manual: `<svg class="extra-svg" viewBox="0 0 100 100"><g fill="none" stroke="black" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"><line x1="50" y1="85" x2="50" y2="25" stroke-width="4"/><path d="M 50,85 C 35,80 15,80 10,85 V 25 C 15,20 35,20 50,25" /><path d="M 50,85 C 65,80 85,80 90,85 V 25 C 85,20 65,20 50,25" /><path d="M 10,85 v 5 c 5,-5 25,-5 40,0 c 15,-5 35,-5 40,0 v -5" stroke-width="4"/></g><line x1="72" y1="45" x2="72" y2="65" stroke="black" stroke-width="7" stroke-linecap="round"/><circle cx="72" cy="32" r="4" fill="black"/></svg>`,
+        agua: `<svg class="extra-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="black" stroke-width="4"/><path d="M 75,65 V 25 H 45" fill="none" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M 35,35 Q 45,25 55,35 Z" fill="none" stroke="black" stroke-width="4" stroke-linejoin="round"/><line x1="35" y1="45" x2="25" y2="70" stroke="black" stroke-width="3" stroke-dasharray="6,6"/><line x1="45" y1="45" x2="40" y2="75" stroke="black" stroke-width="3" stroke-dasharray="6,6"/><line x1="55" y1="45" x2="55" y2="70" stroke="black" stroke-width="3" stroke-dasharray="6,6"/><line x1="20" y1="80" x2="80" y2="20" stroke="black" stroke-width="4"/></svg>`,
+        calor: `<svg class="extra-svg" viewBox="0 0 100 100"><line x1="15" y1="85" x2="85" y2="85" stroke="black" stroke-width="8" stroke-linecap="square"/><path d="M 30,65 Q 20,45 30,35 T 30,10" fill="none" stroke="black" stroke-width="6" stroke-linecap="round"/><path d="M 50,65 Q 40,45 50,35 T 50,10" fill="none" stroke="black" stroke-width="6" stroke-linecap="round"/><path d="M 70,65 Q 60,45 70,35 T 70,10" fill="none" stroke="black" stroke-width="6" stroke-linecap="round"/></svg>`,
+        casa_io: `<svg class="extra-svg" viewBox="0 0 100 100"><path d="M 10,45 L 50,10 L 90,45 M 25,32 V 15 H 35 V 23 M 20,45 V 90 H 80 V 85 M 80,55 V 45" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="55" y1="65" x2="95" y2="65" stroke="black" stroke-width="4" stroke-linecap="round"/><polyline points="85,55 95,65 85,75" fill="none" stroke="black" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><line x1="45" y1="80" x2="85" y2="80" stroke="black" stroke-width="4" stroke-linecap="round"/><polyline points="55,70 45,80 55,90" fill="none" stroke="black" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></svg>`,
+        casa_in: `<svg class="extra-svg" viewBox="0 0 100 100"><path d="M 10,45 L 50,10 L 90,45 M 25,32 V 15 H 35 V 23 M 20,45 V 90 H 80 V 80 M 80,60 V 45" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="50" y1="70" x2="95" y2="70" stroke="black" stroke-width="5" stroke-linecap="round"/><polyline points="65,55 50,70 65,85" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></svg>`,
+        casa_out: `<svg class="extra-svg" viewBox="0 0 100 100"><path d="M 10,45 L 50,10 L 90,45 M 25,32 V 15 H 35 V 23 M 20,45 V 90 H 80 V 80 M 80,60 V 45" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="50" y1="70" x2="95" y2="70" stroke="black" stroke-width="5" stroke-linecap="round"/><polyline points="80,55 95,70 80,85" fill="none" stroke="black" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></svg>`,
+        
+        /* -- NUEVOS ICONOS -- */
+        vapor: `<svg class="extra-svg" viewBox="0 0 100 100"><path d="M 28,72 A 12,12 0 0,1 20,52 A 15,15 0 0,1 35,35 A 18,18 0 0,1 65,35 A 15,15 0 0,1 80,52 A 12,12 0 0,1 72,72 M 15,58 A 15,15 0 0,1 10,35 A 20,20 0 0,1 30,18 A 25,25 0 0,1 70,18 A 20,20 0 0,1 90,35 A 15,15 0 0,1 85,58" fill="none" stroke="black" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><line x1="38" y1="92" x2="34" y2="52" stroke="black" stroke-width="5" stroke-linecap="round"/><line x1="50" y1="92" x2="50" y2="52" stroke="black" stroke-width="5" stroke-linecap="round"/><line x1="62" y1="92" x2="66" y2="52" stroke="black" stroke-width="5" stroke-linecap="round"/></svg>`,
+        grifo: `<svg class="extra-svg" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="black" stroke-width="4"/>
+                    <line x1="35" y1="22" x2="65" y2="22" stroke="black" stroke-width="4" stroke-linecap="square"/>
+                    <line x1="50" y1="22" x2="50" y2="35" stroke="black" stroke-width="4"/>
+                    <path d="M 15,35 H 65 Q 75,35 75,45 V 58" fill="none" stroke="black" stroke-width="4"/>
+                    <path d="M 15,48 H 58 Q 62,48 62,52 V 58" fill="none" stroke="black" stroke-width="4"/>
+                    <line x1="60" y1="65" x2="55" y2="80" stroke="black" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="66" y1="65" x2="63" y2="82" stroke="black" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="72" y1="65" x2="72" y2="82" stroke="black" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="78" y1="65" x2="81" y2="80" stroke="black" stroke-width="4" stroke-linecap="round"/>
+                </svg>`
     };
 
     function agregarBloqueSKU() {
@@ -267,17 +246,29 @@
         div.innerHTML = `
             <div class="bloque-header"><h4>Lote ${num}</h4><button class="btn-eliminar" onclick="this.closest('.bloque-sku').remove(); generarEtiquetas();">❌ Quitar</button></div>
             <div class="input-group"><label>SKU:</label><input type="text" class="in-sku" value=" "></div>
-            <div class="input-group"><label>Producto:</label><input type="text" class="in-producto" value=" "></div>
+            
+            <div class="input-group">
+                <label class="label-check"><input type="checkbox" class="chk-producto" checked> Producto:</label>
+                <input type="text" class="in-producto" value=" ">
+            </div>
+            
             <div class="input-group">
                 <label class="label-check"><input type="checkbox" class="chk-marca" checked> Marca:</label>
                 <input type="text" class="in-marca" value=" ">
             </div>
+            
             <div class="input-group">
                 <label class="label-check"><input type="checkbox" class="chk-modelo" checked> Modelos (;):</label>
                 <input type="text" class="in-modelo" value=" ">
             </div>
-            <div class="input-group"><label>Características:</label><input type="text" class="in-carac" value=" "></div>
+            
+            <div class="input-group">
+                <label>Características:</label>
+                <textarea class="in-carac" rows="2"></textarea>
+            </div>
+            
             <div class="input-group"><label>Origen:</label><input type="text" class="in-origen" value="CHINA"></div>
+            
             <div class="input-group">
                 <label>Clase:</label>
                 <select class="in-clase">
@@ -287,7 +278,8 @@
                     <option value="I">Clase I</option>
                 </select>
             </div>
-            <label>Iconos (Máx. 2):</label>
+            
+            <label>Iconos (Máx. 3):</label>
             <div class="grid-iconos">
                 <label class="check-item"><input type="checkbox" class="c-raee" checked> RAEE</label>
                 <label class="check-item"><input type="checkbox" class="c-manual"> Manual</label>
@@ -296,6 +288,8 @@
                 <label class="check-item"><input type="checkbox" class="c-casa-io"> Casa (In/Out)</label>
                 <label class="check-item"><input type="checkbox" class="c-casa-in"> Casa (In)</label>
                 <label class="check-item"><input type="checkbox" class="c-casa-out"> Casa (Out)</label>
+                <label class="check-item"><input type="checkbox" class="c-vapor"> Vapor</label>
+                <label class="check-item"><input type="checkbox" class="c-grifo"> Grifo</label>
             </div>
         `;
         contenedor.appendChild(div);
@@ -304,13 +298,13 @@
     }
 
     function verificarLimitesIconos(gridElement) {
-        const checkboxes = gridElement.querySelectorAll('input[type="checkbox"]:not(.chk-marca):not(.chk-modelo)');
+        const checkboxes = gridElement.querySelectorAll('input[type="checkbox"]:not(.chk-producto):not(.chk-marca):not(.chk-modelo)');
         const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
         
         checkboxes.forEach(cb => {
             const label = cb.closest('label');
             if (!cb.checked) {
-                cb.disabled = checkedCount >= 2;
+                cb.disabled = checkedCount >= 3;
                 if(cb.disabled) label.classList.add('disabled');
                 else label.classList.remove('disabled');
             } else {
@@ -335,16 +329,16 @@
             const sku = bloque.querySelector('.in-sku').value.toUpperCase();
             const prod = bloque.querySelector('.in-producto').value.toUpperCase();
             const marca = bloque.querySelector('.in-marca').value.toUpperCase();
-            const carac = bloque.querySelector('.in-carac').value;
+            const carac = bloque.querySelector('.in-carac').value.replace(/\n/g, '<br>');
             const origen = bloque.querySelector('.in-origen').value.toUpperCase();
             const clase = bloque.querySelector('.in-clase').value;
             
+            const mostrarProducto = bloque.querySelector('.chk-producto').checked;
             const mostrarMarca = bloque.querySelector('.chk-marca').checked;
             const mostrarModelo = bloque.querySelector('.chk-modelo').checked;
 
             let modelos = bloque.querySelector('.in-modelo').value.split(';').map(m => m.trim().toUpperCase()).filter(m => m !== '');
 
-            // Si se quita el check de modelo o el campo está vacío, forzamos un array con un elemento vacío para generar 1 sola etiqueta
             if (!mostrarModelo || modelos.length === 0) {
                 modelos = ['']; 
             }
@@ -357,15 +351,16 @@
             if(bloque.querySelector('.c-casa-io').checked) selectedIcons.push(SVGS.casa_io);
             if(bloque.querySelector('.c-casa-in').checked) selectedIcons.push(SVGS.casa_in);
             if(bloque.querySelector('.c-casa-out').checked) selectedIcons.push(SVGS.casa_out);
+            if(bloque.querySelector('.c-vapor').checked) selectedIcons.push(SVGS.vapor);
+            if(bloque.querySelector('.c-grifo').checked) selectedIcons.push(SVGS.grifo);
             
-            let iconosHtml = selectedIcons.slice(0, 2).join('');
+            let iconosHtml = selectedIcons.slice(0, 3).join('');
 
             let mainIcon = '';
             let labelClase = "";
             
-            // Configuración del icono y texto de clase
             if(clase !== 'NONE') {
-                if(clase !== 'III') labelClase = ` - Clase ${clase}`;
+                if(clase !== 'III') labelClase = `<br>Clase ${clase}`; 
                 if(clase === 'II') mainIcon = `<svg width="55" height="55"><rect x="2" y="2" width="51" height="51" fill="none" stroke="black" stroke-width="4"/><rect x="14" y="14" width="27" height="27" fill="none" stroke="black" stroke-width="4"/></svg>`;
                 if(clase === 'III') mainIcon = `<svg width="55" height="55"><polygon points="27,4 51,27 27,51 4,27" fill="none" stroke="black" stroke-width="4"/><line x1="20" y1="20" x2="20" y2="35" stroke="black" stroke-width="3"/><line x1="27" y1="20" x2="27" y2="35" stroke="black" stroke-width="3"/><line x1="34" y1="20" x2="34" y2="35" stroke="black" stroke-width="3"/></svg>`;
             }
@@ -377,12 +372,13 @@
             let etiquetasHtml = '';
             
             modelos.forEach(mod => {
+                let htmlProducto = mostrarProducto ? `<div class="etiqueta-header">${prod}</div>` : '';
                 let htmlMarca = mostrarMarca ? `<div class="fila"><span class="bold">Marca:</span> ${marca}</div>` : '';
                 let htmlModelo = (mostrarModelo && mod !== '') ? `<div class="fila"><span class="bold">Modelo:</span> ${mod}</div>` : '';
 
                 etiquetasHtml += `
                     <div class="etiqueta">
-                        <div class="etiqueta-header">${prod}</div>
+                        ${htmlProducto}
                         <div class="etiqueta-body">
                             ${htmlIconoClase}
                             ${htmlMarca}
