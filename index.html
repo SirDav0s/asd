@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador de Etiquetas Pro</title>
+<title>Generador de Etiquetas Pro - Lineas Invisibles, QR y Clase Agrandados</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -108,40 +108,88 @@
         position: relative;
         box-sizing: border-box;
     }
-    .linea-vertical { position: absolute; top: 40px; bottom: 40px; left: 50%; border-left: 1px solid black; z-index: 1; }
+    .linea-vertical { position: absolute; top: 40px; bottom: 40px; left: 50%; border-left: 1px dashed #ccc; z-index: 1; }
     .grupo-impresion-sku { margin-bottom: 60px; position: relative; z-index: 2; }
     .header-sku { text-align: center; margin-bottom: 30px; }
     .caja-sku { display: inline-block; border: 1px solid black; padding: 8px 35px; font-weight: bold; font-size: 14px; background: white; }
 
     .grilla-etiquetas { display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; row-gap: 40px; justify-items: center; }
 
-    .etiqueta { width: 320px; border: 3px solid black; background: white; box-sizing: border-box; color: black; position: relative; page-break-inside: avoid; }
-    .etiqueta-header { border-bottom: 2px solid black; padding: 8px; text-align: center; font-weight: bold; font-size: 13px; }
-    
-    .etiqueta-body { 
-        padding: 12px; 
-        padding-bottom: 65px;
-        min-height: 70px;
-        position: relative; 
+    /* ESTRUCTURA DE LA ETIQUETA - Ancho aumentado lateralmente y espacio QR agrandado */
+    .etiqueta { 
+        width: 360px; /* Ancho aumentado lateralmente de 330 a 360px */
+        border: 2px solid black; 
+        background: white; 
+        box-sizing: border-box; 
+        color: black; 
+        display: flex; 
+        flex-direction: column; 
+        page-break-inside: avoid; 
     }
     
-    .fila { font-size: 15px; margin-bottom: 4px; line-height: 1.2; }
+    .etiqueta-header { 
+        border-bottom: 2px solid black; 
+        padding: 8px; 
+        text-align: center; 
+        font-weight: bold; 
+        font-size: 14px; 
+        text-transform: uppercase;
+    }
+    
+    .etiqueta-middle { 
+        display: flex; 
+        flex-direction: row; 
+        align-items: stretch; 
+        min-height: 120px;
+    }
+    
+    /* Líneas verticales internas eliminadas (border-right: none) */
+    .col-texto { 
+        flex: 1; 
+        padding: 8px; 
+        box-sizing: border-box; 
+    }
+    
+    .col-iconos { 
+        width: 65px; /* Ancho aumentado para iconos de clase más grandes */
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: flex-start;
+        padding: 6px 2px; 
+        gap: 6px; 
+        box-sizing: border-box; 
+    }
+    
+    .col-qr { 
+        width: 120px; /* Ancho aumentado lateralmente de 90 a 120px para el espacio QR */
+        box-sizing: border-box; 
+    }
+    
+    .etiqueta-footer { 
+        border-top: 2px solid black; 
+        text-align: center; 
+        padding: 6px; 
+        font-weight: bold; 
+        font-size: 14px; 
+        text-transform: uppercase; 
+    }
+    
+    /* Textos interiores */
+    .fila { font-size: 13px; margin-bottom: 4px; line-height: 1.3; }
     .bold { font-weight: bold; }
-    
-    .texto-carac { max-width: 210px; min-height: 2.5em; overflow-wrap: break-word; font-size: 14px; }
-    
-    .fila-origen { position: absolute; bottom: 16px; left: 12px; font-size: 15px; }
-    .texto-origen { max-width: 170px; display: inline-block; }
+    .texto-carac { max-width: 100%; min-height: 2.5em; overflow-wrap: break-word; font-size: 12px; }
 
-    /* ICONOS */
-    .icono-clase { position: absolute; top: 12px; right: 12px; z-index: 5; }
-    .contenedor-iconos-extra { position: absolute; bottom: 12px; right: 12px; display: flex; gap: 8px; align-items: flex-end; z-index: 5; }
-    .extra-svg { width: 50px; height: 50px; }
+    /* Iconos */
+    .extra-svg { width: 40px; height: 40px; }
+    /* Iconos de clase AGRANDADOS por normativa */
+    .icono-clase svg { width: 50px; height: 50px; } 
 
     @media print {
         body { background: white; padding: 0; }
         .panel-control { display: none; }
         .area-impresion { box-shadow: none; width: 100%; padding: 10px 0; }
+        .linea-vertical { display: none; }
     }
 </style>
 </head>
@@ -172,10 +220,15 @@
                 <label class="label-check"><input type="checkbox" class="chk-modelo" checked> Modelos (;):</label>
                 <input type="text" class="in-modelo" value=" ">
             </div>
+
+            <div class="input-group">
+                <label>Lote:</label>
+                <input type="text" class="in-lote" value=" ">
+            </div>
             
             <div class="input-group">
                 <label>Características:</label>
-                <textarea class="in-carac" rows="2"></textarea>
+                <textarea class="in-carac" rows="2"> </textarea>
             </div>
             
             <div class="input-group"><label>Origen:</label><input type="text" class="in-origen" value="CHINA"></div>
@@ -248,6 +301,11 @@
                 <label class="label-check"><input type="checkbox" class="chk-modelo" checked> Modelos (;):</label>
                 <input type="text" class="in-modelo" value=" ">
             </div>
+
+            <div class="input-group">
+                <label>Lote:</label>
+                <input type="text" class="in-lote" value=" ">
+            </div>
             
             <div class="input-group">
                 <label>Características:</label>
@@ -315,6 +373,7 @@
             const sku = bloque.querySelector('.in-sku').value.toUpperCase();
             const prod = bloque.querySelector('.in-producto').value.toUpperCase();
             const marca = bloque.querySelector('.in-marca').value.toUpperCase();
+            const lote = bloque.querySelector('.in-lote').value.toUpperCase();
             const carac = bloque.querySelector('.in-carac').value.replace(/\n/g, '<br>');
             const origen = bloque.querySelector('.in-origen').value.toUpperCase();
             const clase = bloque.querySelector('.in-clase').value;
@@ -343,10 +402,9 @@
             let iconosHtml = selectedIcons.slice(0, 3).join('');
 
             let mainIcon = '';
-            
-            // Ya no agregamos texto automático de clase. Solo definimos el SVG si aplica.
-            if(clase === 'II') mainIcon = `<svg width="55" height="55"><rect x="2" y="2" width="51" height="51" fill="none" stroke="black" stroke-width="4"/><rect x="14" y="14" width="27" height="27" fill="none" stroke="black" stroke-width="4"/></svg>`;
-            if(clase === 'III') mainIcon = `<svg width="55" height="55"><polygon points="27,4 51,27 27,51 4,27" fill="none" stroke="black" stroke-width="4"/><line x1="20" y1="20" x2="20" y2="35" stroke="black" stroke-width="3"/><line x1="27" y1="20" x2="27" y2="35" stroke="black" stroke-width="3"/><line x1="34" y1="20" x2="34" y2="35" stroke="black" stroke-width="3"/></svg>`;
+            // GFX de clase AGRANDADOS por normativa. Grosor de borde aumentado.
+            if(clase === 'II') mainIcon = `<svg viewBox="0 0 55 55"><rect x="2" y="2" width="51" height="51" fill="none" stroke="black" stroke-width="5"/><rect x="14" y="14" width="27" height="27" fill="none" stroke="black" stroke-width="5"/></svg>`;
+            if(clase === 'III') mainIcon = `<svg viewBox="0 0 55 55"><polygon points="27,4 51,27 27,51 4,27" fill="none" stroke="black" stroke-width="5"/><line x1="20" y1="20" x2="20" y2="35" stroke="black" stroke-width="4"/><line x1="27" y1="20" x2="27" y2="35" stroke="black" stroke-width="4"/><line x1="34" y1="20" x2="34" y2="35" stroke="black" stroke-width="4"/></svg>`;
             
             let htmlIconoClase = mainIcon ? `<div class="icono-clase">${mainIcon}</div>` : '';
 
@@ -358,19 +416,32 @@
                 let htmlProducto = mostrarProducto ? `<div class="etiqueta-header">${prod}</div>` : '';
                 let htmlMarca = mostrarMarca ? `<div class="fila"><span class="bold">Marca:</span> ${marca}</div>` : '';
                 let htmlModelo = (mostrarModelo && mod !== '') ? `<div class="fila"><span class="bold">Modelo:</span> ${mod}</div>` : '';
+                let htmlLote = lote !== '' ? `<div class="fila"><span class="bold">Lote:</span> ${lote}</div>` : '';
 
                 etiquetasHtml += `
                     <div class="etiqueta">
                         ${htmlProducto}
-                        <div class="etiqueta-body">
-                            ${htmlIconoClase}
-                            ${htmlMarca}
-                            ${htmlModelo}
-                            <div class="fila bold" style="margin-top:8px">Caracteristicas:</div>
-                            <div class="fila texto-carac">${carac}</div>
+                        
+                        <div class="etiqueta-middle">
+                            <div class="col-texto">
+                                ${htmlMarca}
+                                ${htmlModelo}
+                                ${htmlLote}
+                                <div class="fila bold" style="margin-top:8px">Características:</div>
+                                <div class="fila texto-carac">${carac}</div>
+                            </div>
                             
-                            <div class="fila-origen bold">ORIGEN <span class="texto-origen">${origen}</span></div>
-                            <div class="contenedor-iconos-extra">${iconosHtml}</div>
+                            <div class="col-iconos">
+                                ${htmlIconoClase}
+                                ${iconosHtml}
+                            </div>
+                            
+                            <div class="col-qr">
+                                </div>
+                        </div>
+                        
+                        <div class="etiqueta-footer">
+                            HECHO EN ${origen}
                         </div>
                     </div>`;
             });
