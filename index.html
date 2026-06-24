@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador de Etiquetas Pro - Lineas Invisibles, QR y Clase Agrandados</title>
+<title>Generador de Etiquetas Pro - Opciones Avanzadas</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -60,7 +60,7 @@
 
     .input-group { display: flex; flex-direction: column; gap: 4px; }
     
-    input[type="text"], select, textarea { 
+    input[type="text"], input[type="number"], select, textarea { 
         padding: 8px; 
         font-size: 13px; 
         border: 1px solid #ccc; 
@@ -79,6 +79,8 @@
 
     .label-check { display: flex; align-items: center; gap: 6px; cursor: pointer; }
     .label-check input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; }
+    
+    .header-labels { display: flex; justify-content: space-between; align-items: center; }
 
     /* CHECKBOXES ICONOS */
     .grid-iconos {
@@ -115,9 +117,8 @@
 
     .grilla-etiquetas { display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; row-gap: 40px; justify-items: center; }
 
-    /* ESTRUCTURA DE LA ETIQUETA - Ancho aumentado lateralmente y espacio QR agrandado */
+    /* ESTRUCTURA DE LA ETIQUETA - Ancho Dinámico ahora */
     .etiqueta { 
-        width: 360px; /* Ancho aumentado lateralmente de 330 a 360px */
         border: 2px solid black; 
         background: white; 
         box-sizing: border-box; 
@@ -125,6 +126,7 @@
         display: flex; 
         flex-direction: column; 
         page-break-inside: avoid; 
+        transition: width 0.3s ease; /* Efecto visual al agrandar/achicar */
     }
     
     .etiqueta-header { 
@@ -143,7 +145,6 @@
         min-height: 120px;
     }
     
-    /* Líneas verticales internas eliminadas (border-right: none) */
     .col-texto { 
         flex: 1; 
         padding: 8px; 
@@ -151,7 +152,7 @@
     }
     
     .col-iconos { 
-        width: 65px; /* Ancho aumentado para iconos de clase más grandes */
+        width: 65px; 
         display: flex; 
         flex-direction: column; 
         align-items: center; 
@@ -162,7 +163,7 @@
     }
     
     .col-qr { 
-        width: 120px; /* Ancho aumentado lateralmente de 90 a 120px para el espacio QR */
+        width: 120px; 
         box-sizing: border-box; 
     }
     
@@ -178,11 +179,10 @@
     /* Textos interiores */
     .fila { font-size: 13px; margin-bottom: 4px; line-height: 1.3; }
     .bold { font-weight: bold; }
-    .texto-carac { max-width: 100%; min-height: 2.5em; overflow-wrap: break-word; font-size: 12px; }
+    .texto-carac { max-width: 100%; min-height: 2.5em; overflow-wrap: break-word; } /* Font size se controla en linea */
 
     /* Iconos */
     .extra-svg { width: 40px; height: 40px; }
-    /* Iconos de clase AGRANDADOS por normativa */
     .icono-clase svg { width: 50px; height: 50px; } 
 
     @media print {
@@ -199,11 +199,16 @@
     <h3>⚙️ Configuración</h3>
     <div class="input-group">
         <label>Certificado (PDF):</label>
-        <input type="text" id="inCertificado" value="NNN">
+        <input type="text" id="inCertificado" value=" ">
     </div>
     <div class="contenedor-formularios" id="contenedor-formularios">
         <div class="bloque-sku">
             <div class="bloque-header"><h4>Lote 1</h4></div>
+            
+            <div class="input-group">
+                <label class="label-check"><input type="checkbox" class="chk-qr" checked> Habilitar Espacio QR</label>
+            </div>
+            
             <div class="input-group"><label>SKU:</label><input type="text" class="in-sku" value=" "></div>
             
             <div class="input-group">
@@ -222,13 +227,16 @@
             </div>
 
             <div class="input-group">
-                <label>Lote:</label>
+                <label class="label-check"><input type="checkbox" class="chk-lote" checked> Lote:</label>
                 <input type="text" class="in-lote" value=" ">
             </div>
             
             <div class="input-group">
-                <label>Características:</label>
-                <textarea class="in-carac" rows="2"> </textarea>
+                <div class="header-labels">
+                    <label>Características:</label>
+                    <label style="font-weight: normal; font-size: 11px;">Tamaño pt: <input type="number" class="in-tam-carac" value="12" min="8" max="24" style="width: 50px; padding: 2px; height: 22px;"></label>
+                </div>
+                <textarea class="in-carac" rows="2"></textarea>
             </div>
             
             <div class="input-group"><label>Origen:</label><input type="text" class="in-origen" value="CHINA"></div>
@@ -245,7 +253,7 @@
             <label>Iconos (Máx. 3):</label>
             <div class="grid-iconos">
                 <label class="check-item"><input type="checkbox" class="c-raee" checked> RAEE</label>
-                <label class="check-item"><input type="checkbox" class="c-manual"> Manual</label>
+                <label class="check-item"><input type="checkbox" class="c-manual" checked> Manual</label>
                 <label class="check-item"><input type="checkbox" class="c-agua"> No Agua</label>
                 <label class="check-item"><input type="checkbox" class="c-calor"> Calor</label>
                 <label class="check-item"><input type="checkbox" class="c-casa-io"> Casa (In/Out)</label>
@@ -285,6 +293,11 @@
         div.className = 'bloque-sku';
         div.innerHTML = `
             <div class="bloque-header"><h4>Lote ${num}</h4><button class="btn-eliminar" onclick="this.closest('.bloque-sku').remove(); generarEtiquetas();">❌ Quitar</button></div>
+            
+            <div class="input-group">
+                <label class="label-check"><input type="checkbox" class="chk-qr" checked> Habilitar Espacio QR</label>
+            </div>
+            
             <div class="input-group"><label>SKU:</label><input type="text" class="in-sku" value=" "></div>
             
             <div class="input-group">
@@ -303,12 +316,15 @@
             </div>
 
             <div class="input-group">
-                <label>Lote:</label>
+                <label class="label-check"><input type="checkbox" class="chk-lote" checked> Lote:</label>
                 <input type="text" class="in-lote" value=" ">
             </div>
             
             <div class="input-group">
-                <label>Características:</label>
+                <div class="header-labels">
+                    <label>Características:</label>
+                    <label style="font-weight: normal; font-size: 11px;">Tamaño pt: <input type="number" class="in-tam-carac" value="12" min="8" max="24" style="width: 50px; padding: 2px; height: 22px;"></label>
+                </div>
                 <textarea class="in-carac" rows="2"></textarea>
             </div>
             
@@ -326,7 +342,7 @@
             <label>Iconos (Máx. 3):</label>
             <div class="grid-iconos">
                 <label class="check-item"><input type="checkbox" class="c-raee" checked> RAEE</label>
-                <label class="check-item"><input type="checkbox" class="c-manual"> Manual</label>
+                <label class="check-item"><input type="checkbox" class="c-manual" checked> Manual</label>
                 <label class="check-item"><input type="checkbox" class="c-agua"> No Agua</label>
                 <label class="check-item"><input type="checkbox" class="c-calor"> Calor</label>
                 <label class="check-item"><input type="checkbox" class="c-casa-io"> Casa (In/Out)</label>
@@ -342,7 +358,7 @@
     }
 
     function verificarLimitesIconos(gridElement) {
-        const checkboxes = gridElement.querySelectorAll('input[type="checkbox"]:not(.chk-producto):not(.chk-marca):not(.chk-modelo)');
+        const checkboxes = gridElement.querySelectorAll('input[type="checkbox"]:not(.chk-producto):not(.chk-marca):not(.chk-modelo):not(.chk-lote):not(.chk-qr)');
         const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
         
         checkboxes.forEach(cb => {
@@ -377,10 +393,13 @@
             const carac = bloque.querySelector('.in-carac').value.replace(/\n/g, '<br>');
             const origen = bloque.querySelector('.in-origen').value.toUpperCase();
             const clase = bloque.querySelector('.in-clase').value;
+            const tamCarac = bloque.querySelector('.in-tam-carac').value;
             
             const mostrarProducto = bloque.querySelector('.chk-producto').checked;
             const mostrarMarca = bloque.querySelector('.chk-marca').checked;
             const mostrarModelo = bloque.querySelector('.chk-modelo').checked;
+            const mostrarLote = bloque.querySelector('.chk-lote').checked;
+            const mostrarQR = bloque.querySelector('.chk-qr').checked;
 
             let modelos = bloque.querySelector('.in-modelo').value.split(';').map(m => m.trim().toUpperCase()).filter(m => m !== '');
 
@@ -402,11 +421,14 @@
             let iconosHtml = selectedIcons.slice(0, 3).join('');
 
             let mainIcon = '';
-            // GFX de clase AGRANDADOS por normativa. Grosor de borde aumentado.
             if(clase === 'II') mainIcon = `<svg viewBox="0 0 55 55"><rect x="2" y="2" width="51" height="51" fill="none" stroke="black" stroke-width="5"/><rect x="14" y="14" width="27" height="27" fill="none" stroke="black" stroke-width="5"/></svg>`;
             if(clase === 'III') mainIcon = `<svg viewBox="0 0 55 55"><polygon points="27,4 51,27 27,51 4,27" fill="none" stroke="black" stroke-width="5"/><line x1="20" y1="20" x2="20" y2="35" stroke="black" stroke-width="4"/><line x1="27" y1="20" x2="27" y2="35" stroke="black" stroke-width="4"/><line x1="34" y1="20" x2="34" y2="35" stroke="black" stroke-width="4"/></svg>`;
             
             let htmlIconoClase = mainIcon ? `<div class="icono-clase">${mainIcon}</div>` : '';
+            
+            // Calculo de ancho dinámico: 390px con QR, 270px sin QR (restando los 120px de esa columna)
+            let anchoEtiqueta = mostrarQR ? '390px' : '270px';
+            let htmlColumnaQR = mostrarQR ? `<div class="col-qr"></div>` : '';
 
             const divGrupo = document.createElement('div');
             divGrupo.className = 'grupo-impresion-sku';
@@ -416,10 +438,10 @@
                 let htmlProducto = mostrarProducto ? `<div class="etiqueta-header">${prod}</div>` : '';
                 let htmlMarca = mostrarMarca ? `<div class="fila"><span class="bold">Marca:</span> ${marca}</div>` : '';
                 let htmlModelo = (mostrarModelo && mod !== '') ? `<div class="fila"><span class="bold">Modelo:</span> ${mod}</div>` : '';
-                let htmlLote = lote !== '' ? `<div class="fila"><span class="bold">Lote:</span> ${lote}</div>` : '';
+                let htmlLote = (mostrarLote && lote !== '') ? `<div class="fila"><span class="bold">Lote:</span> ${lote}</div>` : '';
 
                 etiquetasHtml += `
-                    <div class="etiqueta">
+                    <div class="etiqueta" style="width: ${anchoEtiqueta};">
                         ${htmlProducto}
                         
                         <div class="etiqueta-middle">
@@ -428,7 +450,7 @@
                                 ${htmlModelo}
                                 ${htmlLote}
                                 <div class="fila bold" style="margin-top:8px">Características:</div>
-                                <div class="fila texto-carac">${carac}</div>
+                                <div class="fila texto-carac" style="font-size: ${tamCarac}px;">${carac}</div>
                             </div>
                             
                             <div class="col-iconos">
@@ -436,8 +458,7 @@
                                 ${iconosHtml}
                             </div>
                             
-                            <div class="col-qr">
-                                </div>
+                            ${htmlColumnaQR}
                         </div>
                         
                         <div class="etiqueta-footer">
