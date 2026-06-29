@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador de Etiquetas Pro - Modo Individual Integrado</title>
+<title>Generador de Etiquetas Pro - Marcas y Modelos Múltiples</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -100,7 +100,7 @@
     .btn-agregar { background-color: #28a745; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
     .btn-imprimir { padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 15px; }
 
-    /* ÁREA DE IMPRESIÓN (Por defecto Grilla) */
+    /* ÁREA DE IMPRESIÓN */
     .area-impresion {
         background: white;
         width: 210mm;
@@ -227,7 +227,7 @@
             </div>
             
             <div class="input-group">
-                <label class="label-check"><input type="checkbox" class="chk-marca" checked> Marca:</label>
+                <label class="label-check"><input type="checkbox" class="chk-marca" checked> Marcas (;):</label>
                 <input type="text" class="in-marca" value=" ">
             </div>
             
@@ -311,13 +311,13 @@
                     .etiqueta { 
                         page-break-after: always; 
                         break-after: page; 
-                        margin: 10mm auto; /* Espaciado superior para que no quede pegada al borde */
+                        margin: 10mm auto; 
                     }
                     .grupo-impresion-sku { margin-bottom: 0 !important; }
                 }
             `;
         } else {
-            styleTag.innerHTML = ``; // Volver a la grilla A4
+            styleTag.innerHTML = ``;
         }
     }
 
@@ -341,7 +341,7 @@
             </div>
             
             <div class="input-group">
-                <label class="label-check"><input type="checkbox" class="chk-marca" checked> Marca:</label>
+                <label class="label-check"><input type="checkbox" class="chk-marca" checked> Marcas (;):</label>
                 <input type="text" class="in-marca" value=" ">
             </div>
             
@@ -420,10 +420,11 @@
     function generarEtiquetas() {
         const cont = document.getElementById('contenedor-global-impresion');
         cont.innerHTML = '';
+        
         document.querySelectorAll('.bloque-sku').forEach(bloque => {
+            // Recolección limpia de datos (eliminé cualquier variable repetida de "marca")
             const sku = bloque.querySelector('.in-sku').value.toUpperCase();
             const prod = bloque.querySelector('.in-producto').value.toUpperCase();
-            const marca = bloque.querySelector('.in-marca').value.toUpperCase();
             const lote = bloque.querySelector('.in-lote').value.toUpperCase();
             const carac = bloque.querySelector('.in-carac').value.replace(/\n/g, '<br>');
             const origen = bloque.querySelector('.in-origen').value.toUpperCase();
@@ -436,11 +437,12 @@
             const mostrarLote = bloque.querySelector('.chk-lote').checked;
             const mostrarQR = bloque.querySelector('.chk-qr').checked;
 
-            let modelos = bloque.querySelector('.in-modelo').value.split(';').map(m => m.trim().toUpperCase()).filter(m => m !== '');
+            // División de marcas y modelos (forzamos un array vacío de 1 lugar si no hay nada escrito)
+            let marcas = bloque.querySelector('.in-marca').value.split(';').map(m => m.trim().toUpperCase()).filter(m => m !== '');
+            if (!mostrarMarca || marcas.length === 0) marcas = ['']; 
 
-            if (!mostrarModelo || modelos.length === 0) {
-                modelos = ['']; 
-            }
+            let modelos = bloque.querySelector('.in-modelo').value.split(';').map(m => m.trim().toUpperCase()).filter(m => m !== '');
+            if (!mostrarModelo || modelos.length === 0) modelos = ['']; 
 
             let selectedIcons = [];
             if(bloque.querySelector('.c-raee').checked) selectedIcons.push(SVGS.raee);
@@ -468,38 +470,42 @@
             divGrupo.className = 'grupo-impresion-sku';
             let etiquetasHtml = '';
             
-            modelos.forEach(mod => {
-                let htmlProducto = mostrarProducto ? `<div class="etiqueta-header">${prod}</div>` : '';
-                let htmlMarca = mostrarMarca ? `<div class="fila"><span class="bold">Marca:</span> ${marca}</div>` : '';
-                let htmlModelo = (mostrarModelo && mod !== '') ? `<div class="fila"><span class="bold">Modelo:</span> ${mod}</div>` : '';
-                let htmlLote = (mostrarLote && lote !== '') ? `<div class="fila"><span class="bold">Lote:</span> ${lote}</div>` : '';
+            // Creación dinámica iterando primero por cada marca y luego por cada modelo
+            marcas.forEach(marcaActual => {
+                modelos.forEach(mod => {
+                    let htmlProducto = mostrarProducto ? `<div class="etiqueta-header">${prod}</div>` : '';
+                    let htmlMarca = (mostrarMarca && marcaActual !== '') ? `<div class="fila"><span class="bold">Marca:</span> ${marcaActual}</div>` : '';
+                    let htmlModelo = (mostrarModelo && mod !== '') ? `<div class="fila"><span class="bold">Modelo:</span> ${mod}</div>` : '';
+                    let htmlLote = (mostrarLote && lote !== '') ? `<div class="fila"><span class="bold">Lote:</span> ${lote}</div>` : '';
 
-                etiquetasHtml += `
-                    <div class="etiqueta" style="width: ${anchoEtiqueta};">
-                        ${htmlProducto}
-                        
-                        <div class="etiqueta-middle">
-                            <div class="col-texto">
-                                ${htmlMarca}
-                                ${htmlModelo}
-                                ${htmlLote}
-                                <div class="fila bold" style="margin-top:8px">Características:</div>
-                                <div class="fila texto-carac" style="font-size: ${tamCarac}px;">${carac}</div>
+                    etiquetasHtml += `
+                        <div class="etiqueta" style="width: ${anchoEtiqueta};">
+                            ${htmlProducto}
+                            
+                            <div class="etiqueta-middle">
+                                <div class="col-texto">
+                                    ${htmlMarca}
+                                    ${htmlModelo}
+                                    ${htmlLote}
+                                    <div class="fila bold" style="margin-top:8px">Características:</div>
+                                    <div class="fila texto-carac" style="font-size: ${tamCarac}px;">${carac}</div>
+                                </div>
+                                
+                                <div class="col-iconos">
+                                    ${htmlIconoClase}
+                                    ${iconosHtml}
+                                </div>
+                                
+                                ${htmlColumnaQR}
                             </div>
                             
-                            <div class="col-iconos">
-                                ${htmlIconoClase}
-                                ${iconosHtml}
+                            <div class="etiqueta-footer">
+                                HECHO EN ${origen}
                             </div>
-                            
-                            ${htmlColumnaQR}
-                        </div>
-                        
-                        <div class="etiqueta-footer">
-                            HECHO EN ${origen}
-                        </div>
-                    </div>`;
+                        </div>`;
+                });
             });
+
             divGrupo.innerHTML = `<div class="header-sku"><div class="caja-sku">SKU: ${sku}</div></div><div class="grilla-etiquetas">${etiquetasHtml}</div>`;
             cont.appendChild(divGrupo);
         });
@@ -519,7 +525,7 @@
         }
     });
     
-    actualizarModoImpresion(); // Inicializa el selector de estilo
+    actualizarModoImpresion(); 
     verificarLimitesIconos(document.querySelector('.grid-iconos'));
     generarEtiquetas();
 </script>
