@@ -244,10 +244,10 @@
             
             <div class="input-group">
                 <div class="header-labels">
-                    <label>Características:</label>
+                    <label>Características (Use (AC) y (DC)):</label>
                     <label style="font-weight: normal; font-size: 11px;">Tamaño pt: <input type="number" class="in-tam-carac" value="12" min="8" max="24" style="width: 50px; padding: 2px; height: 22px;"></label>
                 </div>
-                <textarea class="in-carac" rows="2"></textarea>
+                <textarea class="in-carac" rows="3" placeholder="Ej: Entrada 220V (AC)&#10;Salida 12V (DC)"></textarea>
             </div>
             
             <div class="input-group"><label>Origen:</label><input type="text" class="in-origen" value="CHINA"></div>
@@ -361,10 +361,10 @@
             
             <div class="input-group">
                 <div class="header-labels">
-                    <label>Características:</label>
+                    <label>Características (Use (AC) y (DC)):</label>
                     <label style="font-weight: normal; font-size: 11px;">Tamaño pt: <input type="number" class="in-tam-carac" value="12" min="8" max="24" style="width: 50px; padding: 2px; height: 22px;"></label>
                 </div>
-                <textarea class="in-carac" rows="2"></textarea>
+                <textarea class="in-carac" rows="3" placeholder="Ej: Entrada 220V (AC)&#10;Salida 12V (DC)"></textarea>
             </div>
             
             <div class="input-group"><label>Origen:</label><input type="text" class="in-origen" value="CHINA"></div>
@@ -432,7 +432,16 @@
             const sku = bloque.querySelector('.in-sku').value.toUpperCase();
             const prod = bloque.querySelector('.in-producto').value.toUpperCase();
             const lote = bloque.querySelector('.in-lote').value.toUpperCase();
-            const carac = bloque.querySelector('.in-carac').value.replace(/\n/g, '<br>');
+            
+            // -------- NUEVO CÓDIGO DE REEMPLAZO (AC) y (DC) --------
+            let carac = bloque.querySelector('.in-carac').value.replace(/\n/g, '<br>');
+            
+            const svgAC = `<svg style="width: 1.5em; height: 1.5em; vertical-align: middle; margin: 0 2px;" viewBox="0 0 100 50"><path d="M 10,25 Q 30,5 50,25 T 90,25" fill="none" stroke="black" stroke-width="8" stroke-linecap="round"/></svg>`;
+            const svgDC = `<svg style="width: 1.5em; height: 1.5em; vertical-align: middle; margin: 0 2px;" viewBox="0 0 100 50"><line x1="10" y1="15" x2="90" y2="15" stroke="black" stroke-width="8" stroke-linecap="round"/><line x1="10" y1="35" x2="30" y2="35" stroke="black" stroke-width="8" stroke-linecap="round"/><line x1="40" y1="35" x2="60" y2="35" stroke="black" stroke-width="8" stroke-linecap="round"/><line x1="70" y1="35" x2="90" y2="35" stroke="black" stroke-width="8" stroke-linecap="round"/></svg>`;
+            
+            carac = carac.replace(/\(AC\)/gi, svgAC).replace(/\(DC\)/gi, svgDC);
+            // -------- FIN NUEVO CÓDIGO --------
+
             const origen = bloque.querySelector('.in-origen').value.toUpperCase();
             const clase = bloque.querySelector('.in-clase').value;
             const tamCarac = bloque.querySelector('.in-tam-carac').value;
@@ -460,7 +469,6 @@
             if(bloque.querySelector('.c-vapor').checked) selectedIcons.push(SVGS.vapor);
             if(bloque.querySelector('.c-grifo').checked) selectedIcons.push(SVGS.grifo);
             
-            // LÓGICA PARA LEVANTAR LOS NUEVOS PNGS
             if(bloque.querySelector('.c-auditiva').checked) selectedIcons.push(`<img src="Auditiva.png" class="extra-svg">`);
             if(bloque.querySelector('.c-humedad').checked) selectedIcons.push(`<img src="Humedad.png" class="extra-svg">`);
             if(bloque.querySelector('.c-ocular').checked) selectedIcons.push(`<img src="Ocular.png" class="extra-svg">`);
