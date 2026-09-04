@@ -166,6 +166,17 @@
         width: 120px; 
         box-sizing: border-box; 
     }
+
+    /* NUEVA CLASE PARA LA IMAGEN INFERIOR */
+    .etiqueta-iconos-inferior {
+        text-align: left;
+        padding: 4px 8px;
+    }
+    .etiqueta-iconos-inferior img {
+        max-width: 100%;
+        max-height: 45px; /* Ajusta la altura máxima si es necesario */
+        object-fit: contain;
+    }
     
     .etiqueta-footer { 
         border-top: 2px solid black; 
@@ -180,7 +191,6 @@
     .bold { font-weight: bold; }
     .texto-carac { max-width: 100%; min-height: 2.5em; overflow-wrap: break-word; } 
 
-    /* SE AGREGÓ object-fit PARA QUE LAS IMÁGENES PNG NO SE DEFORMEN */
     .extra-svg { width: 40px; height: 40px; object-fit: contain; }
     .icono-clase svg { width: 50px; height: 50px; } 
 
@@ -275,6 +285,11 @@
                 <label class="check-item"><input type="checkbox" class="c-auditiva"> Auditiva</label>
                 <label class="check-item"><input type="checkbox" class="c-humedad"> Humedad</label>
                 <label class="check-item"><input type="checkbox" class="c-ocular"> Ocular</label>
+            </div>
+
+            <!-- CHECKBOX NUEVO PARA LA IMAGEN INFERIOR -->
+            <div class="input-group" style="margin-top: 10px; background: #fff3cd; padding: 10px; border-radius: 4px; border: 1px solid #ffe69c;">
+                <label class="label-check" style="color: #856404;"><input type="checkbox" class="chk-img-inferior" checked> 🛡️ Tira Iconos Inferior (SegIcono.png)</label>
             </div>
         </div>
     </div>
@@ -393,6 +408,11 @@
                 <label class="check-item"><input type="checkbox" class="c-humedad"> Humedad</label>
                 <label class="check-item"><input type="checkbox" class="c-ocular"> Ocular</label>
             </div>
+
+            <!-- CHECKBOX NUEVO PARA LA IMAGEN INFERIOR -->
+            <div class="input-group" style="margin-top: 10px; background: #fff3cd; padding: 10px; border-radius: 4px; border: 1px solid #ffe69c;">
+                <label class="label-check" style="color: #856404;"><input type="checkbox" class="chk-img-inferior" checked> 🛡️ Tira Iconos Inferior (SegIcono.png)</label>
+            </div>
         `;
         contenedor.appendChild(div);
         verificarLimitesIconos(div.querySelector('.grid-iconos'));
@@ -400,7 +420,7 @@
     }
 
     function verificarLimitesIconos(gridElement) {
-        const checkboxes = gridElement.querySelectorAll('input[type="checkbox"]:not(.chk-producto):not(.chk-marca):not(.chk-modelo):not(.chk-lote):not(.chk-qr)');
+        const checkboxes = gridElement.querySelectorAll('input[type="checkbox"]:not(.chk-producto):not(.chk-marca):not(.chk-modelo):not(.chk-lote):not(.chk-qr):not(.chk-img-inferior)');
         const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
         
         checkboxes.forEach(cb => {
@@ -433,14 +453,12 @@
             const prod = bloque.querySelector('.in-producto').value.toUpperCase();
             const lote = bloque.querySelector('.in-lote').value.toUpperCase();
             
-            // -------- NUEVO CÓDIGO DE REEMPLAZO (AC) y (DC) --------
             let carac = bloque.querySelector('.in-carac').value.replace(/\n/g, '<br>');
             
             const svgAC = `<svg style="width: 1.5em; height: 1.5em; vertical-align: middle; margin: 0 2px;" viewBox="0 0 100 50"><path d="M 10,25 Q 30,5 50,25 T 90,25" fill="none" stroke="black" stroke-width="8" stroke-linecap="round"/></svg>`;
             const svgDC = `<svg style="width: 1.5em; height: 1.5em; vertical-align: middle; margin: 0 2px;" viewBox="0 0 100 50"><line x1="10" y1="15" x2="90" y2="15" stroke="black" stroke-width="8" stroke-linecap="round"/><line x1="10" y1="35" x2="30" y2="35" stroke="black" stroke-width="8" stroke-linecap="round"/><line x1="40" y1="35" x2="60" y2="35" stroke="black" stroke-width="8" stroke-linecap="round"/><line x1="70" y1="35" x2="90" y2="35" stroke="black" stroke-width="8" stroke-linecap="round"/></svg>`;
             
             carac = carac.replace(/\(AC\)/gi, svgAC).replace(/\(DC\)/gi, svgDC);
-            // -------- FIN NUEVO CÓDIGO --------
 
             const origen = bloque.querySelector('.in-origen').value.toUpperCase();
             const clase = bloque.querySelector('.in-clase').value;
@@ -451,6 +469,10 @@
             const mostrarModelo = bloque.querySelector('.chk-modelo').checked;
             const mostrarLote = bloque.querySelector('.chk-lote').checked;
             const mostrarQR = bloque.querySelector('.chk-qr').checked;
+            
+            // Lógica para detectar el nuevo checkbox
+            const chkInferior = bloque.querySelector('.chk-img-inferior');
+            const mostrarImgInferior = chkInferior ? chkInferior.checked : false;
 
             let marcas = bloque.querySelector('.in-marca').value.split(';').map(m => m.trim().toUpperCase()).filter(m => m !== '');
             if (!mostrarMarca || marcas.length === 0) marcas = ['']; 
@@ -484,6 +506,9 @@
             let anchoEtiqueta = mostrarQR ? '390px' : '270px';
             let htmlColumnaQR = mostrarQR ? `<div class="col-qr"></div>` : '';
 
+            // Generar el bloque HTML de la imagen inferior si está chequeado
+            let htmlImgInferior = mostrarImgInferior ? `<div class="etiqueta-iconos-inferior"><img src="SegIcono.png" alt="Iconos de Seguridad"></div>` : '';
+
             const divGrupo = document.createElement('div');
             divGrupo.className = 'grupo-impresion-sku';
             let etiquetasHtml = '';
@@ -515,6 +540,9 @@
                                 
                                 ${htmlColumnaQR}
                             </div>
+                            
+                            <!-- SECCIÓN NUEVA INSERTADA AQUÍ -->
+                            ${htmlImgInferior}
                             
                             <div class="etiqueta-footer">
                                 HECHO EN ${origen}
